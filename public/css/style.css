@@ -1006,10 +1006,17 @@ button:disabled, .disabled {
 .hidden { display: none !important; }
 
 @media (max-width: 900px) {
-  body { padding: 10px; align-items: flex-start; }
-  .app-container { width: 100%; height: auto; min-height: 92vh; max-height: none; }
+  body { padding: 10px; padding-top: 56px; align-items: flex-start; }
+  #sound-toggle { top: 10px; right: 10px; padding: 8px; }
+  .app-container { width: 100%; height: auto; min-height: 90vh; max-height: none; }
   .card-grid, .lobby-layout, .game-arena-layout, .game-cards-container, .social-options-grid {
     grid-template-columns: 1fr;
   }
+  .game-arena-layout { height: auto; }
+  .game-stage-container { height: auto; min-height: 460px; overflow: visible; }
+  .game-canvas-wrapper { min-height: 380px; }
+  .game-subview { position: relative; min-height: 380px; }
+  .social-stage-fill { padding: 12px; }
+  .game-sidebar { height: auto; max-height: 420px; }
   .logo-glow { font-size: 2.8rem; }
 }
