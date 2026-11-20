@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity Game Share - Multiplayer Social & Arcade</title>
+  <meta name="description" content="Zero-login real-time multiplayer gaming platform for friends. Play Social Hangout games (Judgment Court, Feelings Meter, Who's Most Likely, Spy) and Arcade games!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <div id="starfield"></div>
+
+  <button id="sound-toggle" class="glass-btn icon-btn" aria-label="Toggle Sound">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+      <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.063.922-2.063 2.063v4.874c0 1.141.922 2.062 2.063 2.062h1.932l4.5 4.5c.944.945 2.56.276 2.56-1.06V4.06zM18.57 8.43a.75.75 0 00-1.06 1.06 4 4 0 010 5.66.75.75 0 101.06 1.06 5.5 5.5 0 000-7.78z"/>
+      <path d="M21.4 5.6a.75.75 0 00-1.06 1.06 8 8 0 010 10.68.75.75 0 101.06 1.06 9.5 9.5 0 000-12.8z"/>
+    </svg>
+  </button>
+
+  <main class="app-container">
+
+    <!-- HOME VIEW -->
+    <section id="home-view" class="view active">
+      <header class="hero-header">
+        <div class="logo-container">
+          <h1 class="logo-glow">ANTIGRAVITY</h1>
+          <p class="subtitle-neon">Multiplayer Social & Arcade Hub</p>
+        </div>
+      </header>
+
+      <div class="card-grid">
+        <div class="glass-card main-setup-card">
+          <h2 class="card-title">Enter Without Login</h2>
+          <div class="input-group">
+            <label for="player-nickname">Your Nickname / اسمك في القعدة</label>
+            <input type="text" id="player-nickname" placeholder="AstroExplorer" maxlength="18" autocomplete="off">
+          </div>
+
+          <div class="action-buttons">
+            <button id="btn-host-mode" class="glow-btn-cyan">Create New Room / افتح قعدة جديدة</button>
+            <div class="divider"><span>OR JOIN FRIENDS</span></div>
+            <div class="join-group">
+              <input type="text" id="join-code-input" placeholder="ROOM CODE" maxlength="5" autocomplete="off">
+              <button id="btn-join-mode" class="glow-btn-magenta">Join / ادخل</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card info-card">
+          <h3>Two Worlds of Play</h3>
+          <div class="mode-preview-list">
+            <div class="mode-preview-item social">
+              <span class="mode-emoji">🔥</span>
+              <div>
+                <strong>قعدة الأصحاب (Social & Hangout)</strong>
+                <p>محكمة الأحكام، مقياس المشاعر، مين فينا؟، والجاسوس — ألعاب تفاعلية لقعدة الصحاب.</p>
+              </div>
+            </div>
+            <div class="mode-preview-item arcade">
+              <span class="mode-emoji">🎮</span>
+              <div>
+                <strong>أركيد وبازل (Arcade & Puzzle)</strong>
+                <p>Astro Trail, Cyber Sketch, Neon Grid & Cosmic Quiz — تحديات سريعة ومباشرة.</p>
+              </div>
+            </div>
+          </div>
+          <div class="p2p-badge">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            Real-Time Socket Server • Zero Login
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOBBY VIEW -->
+    <section id="lobby-view" class="view">
+      <div class="lobby-layout">
+
+        <aside class="lobby-sidebar glass-card">
+          <div class="room-code-panel">
+            <span class="panel-label">Session Code</span>
+            <div class="code-display-wrapper">
+              <h2 id="room-code-display">-----</h2>
+              <div class="code-btn-group">
+                <button id="btn-copy-code" class="glass-btn small-btn" title="Copy Code">Code</button>
+                <button id="btn-copy-link" class="glass-btn small-btn" title="Copy Invite Link">Link</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="players-panel">
+            <div class="panel-header">
+              <h3>Crew List</h3>
+              <span id="player-count-badge" class="badge">1/12</span>
+            </div>
+            <ul id="players-list" class="players-list"></ul>
+          </div>
+
+          <div class="chat-panel">
+            <div class="panel-header">
+              <h3>Comms Chat</h3>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <form id="chat-form" class="chat-input-group">
+              <input type="text" id="chat-input" placeholder="Type a message..." maxlength="150" autocomplete="off">
+              <button type="submit" class="send-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        <div class="lobby-main glass-card">
+          <div class="lobby-main-header">
+            <div>
+              <h2>Choose Game Mode</h2>
+              <p id="host-only-msg" class="neon-text-pulse">Only the host can launch games.</p>
+            </div>
+            <div class="category-tabs">
+              <button class="cat-tab active" data-category="social">🔥 قعدة الأصحاب (Social)</button>
+              <button class="cat-tab" data-category="arcade">🎮 أركيد وبازل (Arcade)</button>
+            </div>
+          </div>
+
+          <!-- CATEGORY 1: SOCIAL & HANGOUT -->
+          <div id="cat-social" class="game-cards-container category-panel active">
+            <div class="game-card selected" data-game="judgment-court" data-category="social">
+              <div class="game-card-icon">⚖️</div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">تحديات وأحكام</div>
+                <h3>محكمة الأحكام</h3>
+                <p>أحكام وتحديات بمستويات (خفيف / حامي / نار) وتصويت مباشر من الشلة على التنفيذ + إضافة أحكام من تأليفكم!</p>
+                <div class="game-meta">
+                  <span>👥 2-12 Players</span>
+                  <span>🔥 Interactive</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="vibe-meter" data-category="social">
+              <div class="game-card-icon">💞</div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">اختبار المشاعر</div>
+                <h3>مقياس المشاعر والتوافق</h3>
+                <p>اختبروا قد إيه فاهمين بعض! نجم الجولة بيجاوب عن مشاعره والباقي بيتوقعوا إجابته لحساب نسبة التوافق.</p>
+                <div class="game-meta">
+                  <span>👥 2-12 Players</span>
+                  <span>💞 Vibe Check</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="whos-likely" data-category="social">
+              <div class="game-card-icon">🎯</div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">تصويت الشلة</div>
+                <h3>مين فينا؟</h3>
+                <p>أسئلة سريعة ومضحكة عن الشلة! كل واحد يصوّت سراً على أكتر شخص ينطبق عليه الموقف.</p>
+                <div class="game-meta">
+                  <span>👥 2-12 Players</span>
+                  <span>🗳️ Live Poll</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="spy-game" data-category="social">
+              <div class="game-card-icon">🕵️</div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">ذكاء وخداع</div>
+                <h3>الجاسوس في القعدة</h3>
+                <p>كلكم عارفين الكلمة السرية ما عدا الجاسوس! اسألوا بعض بذكاء واكشفوه قبل ما يخدعكم.</p>
+                <div class="game-meta">
+                  <span>👥 3-12 Players</span>
+                  <span>🕵️ Deduction</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CATEGORY 2: ARCADE & PUZZLE -->
+          <div id="cat-arcade" class="game-cards-container category-panel">
+            <div class="game-card" data-game="astro-trail" data-category="arcade">
+              <div class="game-card-icon">🚀</div>
+              <div class="game-card-content">
+                <div class="game-badge">Action / Speed</div>
+                <h3>Astro Trail</h3>
+                <p>Pilot a glowing ship leaving a deadly neon trail. Cut off your friends and be the last survivor.</p>
+                <div class="game-meta">
+                  <span>👥 1-4 Players</span>
+                  <span>⚡ Real-Time</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="draw-guess" data-category="arcade">
+              <div class="game-card-icon">🎨</div>
+              <div class="game-card-content">
+                <div class="game-badge">Party / Creative</div>
+                <h3>Cyber Sketch</h3>
+                <p>Draw the secret cosmic word on a synced canvas while friends race to type the right guess.</p>
+                <div class="game-meta">
+                  <span>👥 2-8 Players</span>
+                  <span>🎨 Canvas Sync</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="neon-grid" data-category="arcade">
+              <div class="game-card-icon">🌐</div>
+              <div class="game-card-content">
+                <div class="game-badge">Strategy / Turn-Based</div>
+                <h3>Neon Grid</h3>
+                <p>Connect the dots on a holographic grid. Capture boxes to earn extra turns against friends or AI.</p>
+                <div class="game-meta">
+                  <span>👥 1-4 Players</span>
+                  <span>🤖 VS Bot Ready</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="cosmic-quiz" data-category="arcade">
+              <div class="game-card-icon">🧠</div>
+              <div class="game-card-content">
+                <div class="game-badge">Mind Game</div>
+                <h3>Cosmic Quiz</h3>
+                <p>Answer rapid-fire space & science trivia faster than your friends for speed bonus points.</p>
+                <div class="game-meta">
+                  <span>👥 1-12 Players</span>
+                  <span>⏱️ Timed Trivia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lobby-actions">
+            <button id="btn-leave-lobby" class="glass-btn danger-hover-btn">Leave Room</button>
+            <button id="btn-start-game" class="glow-btn-cyan">Launch Game</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME ARENA VIEW -->
+    <section id="game-view" class="view">
+      <div class="game-arena-layout">
+
+        <div class="game-stage-container glass-card">
+          <div class="stage-header">
+            <button id="btn-exit-game" class="glass-btn small-btn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+              Back to Lobby
+            </button>
+            <h2 id="current-game-title">Game Title</h2>
+            <div id="game-timer" class="game-timer">--</div>
+          </div>
+
+          <div id="game-canvas-wrapper" class="game-canvas-wrapper">
+            <!-- Arcade Subviews -->
+            <div id="game-astro-trail" class="game-subview">
+              <canvas id="astro-trail-canvas"></canvas>
+              <div id="astro-trail-instructions" class="game-overlay-msg">Use Arrow keys or WASD to turn!</div>
+            </div>
+
+            <div id="game-draw-guess" class="game-subview">
+              <div class="draw-guess-container">
+                <div class="draw-tools">
+                  <div class="tool-group colors">
+                    <button class="color-btn active" data-color="#ff007f" style="background: #ff007f;"></button>
+                    <button class="color-btn" data-color="#00f0ff" style="background: #00f0ff;"></button>
+                    <button class="color-btn" data-color="#39ff14" style="background: #39ff14;"></button>
+                    <button class="color-btn" data-color="#ffff00" style="background: #ffff00;"></button>
+                    <button class="color-btn" data-color="#ffffff" style="background: #ffffff;"></button>
+                  </div>
+                  <div class="tool-group brush-sizes">
+                    <button class="size-btn active" data-size="4"><span class="brush-dot size-sm"></span></button>
+                    <button class="size-btn" data-size="8"><span class="brush-dot size-md"></span></button>
+                    <button class="size-btn" data-size="16"><span class="brush-dot size-lg"></span></button>
+                  </div>
+                  <button id="draw-clear-btn" class="glass-btn small-btn">Clear</button>
+                </div>
+                <div class="canvas-canvas-wrapper">
+                  <canvas id="draw-guess-canvas"></canvas>
+                  <div id="draw-guess-word-prompt" class="draw-word-indicator">Waiting for word...</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="game-neon-grid" class="game-subview">
+              <div id="neon-grid-board" class="neon-grid-board"></div>
+              <div id="neon-grid-status" class="game-status-bar">Player 1's turn</div>
+            </div>
+
+            <div id="game-cosmic-quiz" class="game-subview">
+              <div class="quiz-question-card">
+                <div id="quiz-question-text" class="quiz-question">Question Text Here?</div>
+                <div id="quiz-options-container" class="quiz-options"></div>
+              </div>
+            </div>
+
+            <!-- Social Hangout Subviews -->
+            <div id="game-judgment-court" class="game-subview">
+              <div id="judgment-court-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-vibe-meter" class="game-subview">
+              <div id="vibe-meter-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-whos-likely" class="game-subview">
+              <div id="whos-likely-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-spy-game" class="game-subview">
+              <div id="spy-game-stage" class="social-stage-fill"></div>
+            </div>
+
+            <!-- Generic Overlay -->
+            <div id="game-overlay" class="game-overlay hidden">
+              <div class="overlay-content glass-card">
+                <h2 id="overlay-title">Ready?</h2>
+                <div id="overlay-body">Loading...</div>
+                <button id="btn-overlay-action" class="glow-btn-cyan hidden">Play Again</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="game-sidebar glass-card">
+          <div class="scoreboard-panel">
+            <h3>Scoreboard</h3>
+            <ul id="game-scores-list" class="scores-list"></ul>
+          </div>
+
+          <div class="game-chat-panel">
+            <h3>Arena Comms</h3>
+            <div id="game-chat-messages" class="chat-messages"></div>
+            <form id="game-chat-form" class="chat-input-group">
+              <input type="text" id="game-chat-input" placeholder="Type guess or chat..." maxlength="150" autocomplete="off">
+              <button type="submit" class="send-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast-container"></div>
+
+  <div id="connection-status-indicator" class="connection-status offline hidden">
+    <div class="status-pulse"></div>
+    <span id="status-text">Disconnected</span>
+  </div>
+
+  <script src="/js/audio.js"></script>
+  <script src="/js/network.js"></script>
+  <script src="/js/games/astro-trail.js"></script>
+  <script src="/js/games/draw-guess.js"></script>
+  <script src="/js/games/neon-grid.js"></script>
+  <script src="/js/games/cosmic-quiz.js"></script>
+  <script src="/js/games/judgment-court.js"></script>
+  <script src="/js/games/vibe-meter.js"></script>
+  <script src="/js/games/whos-likely.js"></script>
+  <script src="/js/games/spy-game.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

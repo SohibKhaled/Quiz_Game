@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: antigravity-game-share
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /ping
+    envVars:
+      - key: NODE_ENV
+        value: production
