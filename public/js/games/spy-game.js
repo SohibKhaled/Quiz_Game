@@ -220,11 +220,11 @@ const SpyGame = (function() {
     if (phase === 'idle') {
       html += `
         <div class="social-card center-card">
-          <div class="social-big-emoji">🕵️</div>
+          <div class="social-icon-badge"><i data-lucide="venetian-mask"></i></div>
           <h3>الجاسوس في القعدة</h3>
           <p>كل الشلة هتعرف الكلمة السرية ما عدا واحد بس هو <strong>الجاسوس</strong>! اسألوا بعض أسئلة ذكية واكشفوا مين الجاسوس قبل ما يضحك عليكم!</p>
           ${isHost
-            ? `<button id="spy-start-btn" class="glow-btn-cyan">وزّع الأدوار 🕵️</button>`
+            ? `<button id="spy-start-btn" class="glow-btn-cyan"><i data-lucide="shuffle"></i> وزّع الأدوار</button>`
             : `<p class="waiting-pulse">في انتظار المضيف لتوزيع الأدوار...</p>`}
         </div>
       `;
@@ -234,14 +234,14 @@ const SpyGame = (function() {
           <p class="vibe-subtitle">اضغط على الكارت عشان تشوف دورك سراً (خلي بالك محدش يبص في موبايلك!)</p>
           <div id="spy-secret-card" class="spy-secret-card ${cardHidden ? 'hidden-card' : (myRole.isSpy ? 'is-spy' : 'is-crew')}">
             ${cardHidden
-              ? `<span>👁️ اضغط لإظهار الكارت السري</span>`
+              ? `<span><i data-lucide="eye"></i> اضغط لإظهار الكارت السري</span>`
               : (myRole.isSpy
-                  ? `<h3>🕵️ أنت الجاسوس!</h3><p>التصنيف: <strong>${myRole.category}</strong><br>حاول تفهم الكلمة من أسئلة صحابك ومتتكشفش!</p>`
-                  : `<h3>✅ أنت من الشلة</h3><p>التصنيف: <strong>${myRole.category}</strong><br>الكلمة السرية: <strong class="secret-word-highlight">${myRole.word}</strong></p>`)}
+                  ? `<h3><i data-lucide="venetian-mask"></i> أنت الجاسوس!</h3><p>التصنيف: <strong>${myRole.category}</strong><br>حاول تفهم الكلمة من أسئلة صحابك ومتتكشفش!</p>`
+                  : `<h3><i data-lucide="shield-check"></i> أنت من الشلة</h3><p>التصنيف: <strong>${myRole.category}</strong><br>الكلمة السرية: <strong class="secret-word-highlight">${myRole.word}</strong></p>`)}
           </div>
           <p class="vote-counter">اسألوا بعض في القعدة أو في الشات، ولما تجهزوا ابدأوا التصويت!</p>
           ${isHost
-            ? `<button id="spy-open-vote-btn" class="glow-btn-magenta">ابدأ التصويت لكشف الجاسوس 🗳️</button>`
+            ? `<button id="spy-open-vote-btn" class="glow-btn-magenta"><i data-lucide="vote"></i> ابدأ التصويت لكشف الجاسوس</button>`
             : `<p class="waiting-pulse">المضيف هيفتح التصويت لما المناقشة تخلص...</p>`}
         </div>
       `;
@@ -250,7 +250,7 @@ const SpyGame = (function() {
       const totalVotes = Object.keys(votes).length;
       html += `
         <div class="social-card">
-          <h3 class="social-question">مين في الشلة هو الجاسوس؟ 🕵️</h3>
+          <h3 class="social-question">مين في الشلة هو الجاسوس؟</h3>
           <div class="player-vote-grid">
             ${players.map(p => `
               <button class="player-vote-btn ${myVote === p.id ? 'selected' : ''}" 
@@ -269,13 +269,14 @@ const SpyGame = (function() {
       html += `
         <div class="social-card center-card">
           <div class="result-banner ${roundMeta.crewWon ? 'win' : 'lose'}">
+            <i data-lucide="${roundMeta.crewWon ? 'shield-check' : 'venetian-mask'}"></i>
             ${roundMeta.crewWon
-              ? `🎉 الشلة كشفت الجاسوس! (${roundMeta.spyName})`
-              : `🕵️ الجاسوس (${roundMeta.spyName}) خدعكم! صوّتوا ضد ${accused ? accused.nickname : 'شخص بريء'}`}
+              ? `الشلة كشفت الجاسوس! (${roundMeta.spyName})`
+              : `الجاسوس (${roundMeta.spyName}) خدعكم! صوّتوا ضد ${accused ? accused.nickname : 'شخص بريء'}`}
           </div>
           <p style="margin: 10px 0;">الكلمة السرية كانت: <strong class="secret-word-highlight">${roundMeta.word}</strong></p>
           ${isHost
-            ? `<button id="spy-start-btn" class="glow-btn-cyan">جولة جديدة 🕵️</button>`
+            ? `<button id="spy-start-btn" class="glow-btn-cyan"><i data-lucide="rotate-cw"></i> جولة جديدة</button>`
             : `<p class="waiting-pulse">في انتظار المضيف لجولة جديدة...</p>`}
         </div>
       `;
@@ -283,6 +284,7 @@ const SpyGame = (function() {
 
     html += `</div>`;
     stage.innerHTML = html;
+    if (window.refreshIcons) window.refreshIcons();
 
     const startBtn = document.getElementById('spy-start-btn');
     if (startBtn) startBtn.addEventListener('click', startRound);

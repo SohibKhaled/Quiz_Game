@@ -161,11 +161,11 @@ const WhosLikelyGame = (function() {
     if (!currentRound) {
       html += `
         <div class="social-card center-card">
-          <div class="social-big-emoji">🎯</div>
+          <div class="social-icon-badge"><i data-lucide="crosshair"></i></div>
           <h3>مين فينا؟</h3>
           <p>هيظهر سؤال عن الشلة، وكل واحد يصوّت سراً على أكتر شخص ينطبق عليه الوصف! اللي يصوّت مع الأغلبية بيكسب 10 نقط.</p>
           ${isHost
-            ? `<button id="wl-start-btn" class="glow-btn-cyan">ابدأ التصويت 🎯</button>`
+            ? `<button id="wl-start-btn" class="glow-btn-cyan"><i data-lucide="play"></i> ابدأ التصويت</button>`
             : `<p class="waiting-pulse">في انتظار المضيف لبدء اللعبة...</p>`}
         </div>
       `;
@@ -209,7 +209,7 @@ const WhosLikelyGame = (function() {
               return `
                 <div class="poll-row ${isTop ? 'top-winner' : ''}">
                   <div class="poll-label">
-                    <span style="color: ${p.color}; font-weight: 700;">${isTop ? '👑 ' : ''}${p.nickname}</span>
+                    <span style="color: ${p.color}; font-weight: 700;">${isTop ? '<i data-lucide="crown"></i> ' : ''}${p.nickname}</span>
                     <span>${c} صوت (${pct}%)</span>
                   </div>
                   <div class="poll-bar-bg">
@@ -220,7 +220,7 @@ const WhosLikelyGame = (function() {
             }).join('')}
           </div>
           ${isHost
-            ? `<button id="wl-next-btn" class="glow-btn-cyan">السؤال اللي بعده 🎯</button>`
+            ? `<button id="wl-next-btn" class="glow-btn-cyan"><i data-lucide="arrow-right"></i> السؤال اللي بعده</button>`
             : `<p class="waiting-pulse">في انتظار المضيف للسؤال التالي...</p>`}
         `;
       }
@@ -230,6 +230,7 @@ const WhosLikelyGame = (function() {
 
     html += `</div>`;
     stage.innerHTML = html;
+    if (window.refreshIcons) window.refreshIcons();
 
     const startBtn = document.getElementById('wl-start-btn');
     if (startBtn) startBtn.addEventListener('click', nextPrompt);

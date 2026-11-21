@@ -204,9 +204,9 @@ const JudgmentCourtGame = (function() {
     if (!stage) return;
 
     const intensityLabels = {
-      chill: '😎 خفيف ومضحك',
-      spicy: '🌶️ حامي ومحرِج',
-      extreme: '🔥 نار وتحدي'
+      chill: { icon: 'smile', label: 'خفيف ومضحك' },
+      spicy: { icon: 'flame', label: 'حامي ومحرِج' },
+      extreme: { icon: 'zap', label: 'نار وتحدي' }
     };
 
     let html = `
@@ -216,7 +216,7 @@ const JudgmentCourtGame = (function() {
             ${Object.keys(intensityLabels).map(key => `
               <button class="pill-btn ${currentIntensity === key ? 'active' : ''}" 
                 data-intensity="${key}" ${!isHost ? 'disabled' : ''}>
-                ${intensityLabels[key]}
+                <i data-lucide="${intensityLabels[key].icon}"></i> ${intensityLabels[key].label}
               </button>
             `).join('')}
           </div>
@@ -226,11 +226,11 @@ const JudgmentCourtGame = (function() {
     if (!currentRound) {
       html += `
         <div class="social-card center-card">
-          <div class="social-big-emoji">⚖️</div>
+          <div class="social-icon-badge"><i data-lucide="scale"></i></div>
           <h3>محكمة الأحكام جاهزة!</h3>
           <p>في كل دور هيتم اختيار واحد من الشلة وتنفيذ حكم قدام الكل. الشلة هتصوّت إذا كان نفّذ الحكم ولا هرب!</p>
           ${isHost
-            ? `<button id="jc-draw-btn" class="glow-btn-cyan">اسحب أول حكم ⚖️</button>`
+            ? `<button id="jc-draw-btn" class="glow-btn-cyan"><i data-lucide="gavel"></i> اسحب أول حكم</button>`
             : `<p class="waiting-pulse">في انتظار المضيف لبدء المحكمة...</p>`}
         </div>
       `;
@@ -239,6 +239,7 @@ const JudgmentCourtGame = (function() {
       const isTarget = currentRound.targetId === myId && players.length > 1;
       const passCount = Object.values(currentRound.votes).filter(v => v === 'pass').length;
       const failCount = Object.values(currentRound.votes).filter(v => v === 'fail').length;
+      const badgeInfo = intensityLabels[currentRound.intensity] || { icon: 'flame', label: '' };
 
       html += `
         <div class="social-card judgment-card">
@@ -247,7 +248,7 @@ const JudgmentCourtGame = (function() {
             <strong style="color: ${currentRound.targetColor};">${currentRound.targetName}</strong>
           </div>
           <div class="dare-box">
-            <span class="dare-badge">${intensityLabels[currentRound.intensity] || ''}</span>
+            <span class="dare-badge"><i data-lucide="${badgeInfo.icon}"></i> ${badgeInfo.label}</span>
             <p class="dare-text">${currentRound.dareText}</p>
           </div>
       `;
@@ -259,13 +260,13 @@ const JudgmentCourtGame = (function() {
           html += `
             <div class="vote-actions">
               <button id="jc-vote-pass" class="glow-btn-green ${myVote === 'pass' ? 'selected-vote' : ''}" ${myVote ? 'disabled' : ''}>
-                ✅ نفّذ الحكم (+15)
+                <i data-lucide="check-circle"></i> نفّذ الحكم (+15)
               </button>
               <button id="jc-vote-fail" class="glow-btn-magenta ${myVote === 'fail' ? 'selected-vote' : ''}" ${myVote ? 'disabled' : ''}>
-                ❌ هرب / رفض (-5)
+                <i data-lucide="x-circle"></i> هرب / رفض (-5)
               </button>
             </div>
-            <p class="vote-counter">الأصوات: ✅ ${passCount} | ❌ ${failCount}</p>
+            <p class="vote-counter">الأصوات: <i data-lucide="check"></i> ${passCount} | <i data-lucide="x"></i> ${failCount}</p>
           `;
         }
         if (isHost) {
@@ -274,12 +275,13 @@ const JudgmentCourtGame = (function() {
       } else {
         html += `
           <div class="result-banner ${currentRound.passed ? 'win' : 'lose'}">
+            <i data-lucide="${currentRound.passed ? 'award' : 'shield-alert'}"></i>
             ${currentRound.passed
-              ? `🎉 براءة! ${currentRound.targetName} نفّذ الحكم بشجاعة (+15 نقطة)`
-              : `💀 أدانة! ${currentRound.targetName} هرب من الحكم (-5 نقاط)`}
+              ? `براءة! ${currentRound.targetName} نفّذ الحكم بشجاعة (+15 نقطة)`
+              : `إدانة! ${currentRound.targetName} هرب من الحكم (-5 نقاط)`}
           </div>
           ${isHost
-            ? `<button id="jc-draw-btn" class="glow-btn-cyan">الحكم اللي بعده ⚖️</button>`
+            ? `<button id="jc-draw-btn" class="glow-btn-cyan"><i data-lucide="gavel"></i> الحكم اللي بعده</button>`
             : `<p class="waiting-pulse">في انتظار المضيف للدور التالي...</p>`}
         `;
       }
@@ -290,12 +292,13 @@ const JudgmentCourtGame = (function() {
     html += `
         <form id="jc-custom-form" class="custom-prompt-bar">
           <input type="text" id="jc-custom-input" placeholder="اكتب حكم من تأليفك للشلة..." maxlength="120" autocomplete="off">
-          <button type="submit" class="glass-btn small-btn">+ أضف حكم</button>
+          <button type="submit" class="glass-btn small-btn"><i data-lucide="plus"></i> أضف حكم</button>
         </form>
       </div>
     `;
 
     stage.innerHTML = html;
+    if (window.refreshIcons) window.refreshIcons();
 
     // Bind events
     stage.querySelectorAll('.pill-btn').forEach(btn => {

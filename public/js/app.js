@@ -1,4 +1,10 @@
 // Main UI Coordinator and Game Shell
+window.refreshIcons = function() {
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+};
+
 const App = (function() {
   let activeGame = null;
   let activeGameType = '';
@@ -16,6 +22,7 @@ const App = (function() {
   const btnJoinMode = document.getElementById('btn-join-mode');
   const btnCopyCode = document.getElementById('btn-copy-code');
   const btnCopyLink = document.getElementById('btn-copy-link');
+  const btnShareInvite = document.getElementById('btn-share-invite');
   const btnLeaveLobby = document.getElementById('btn-leave-lobby');
   const btnStartGame = document.getElementById('btn-start-game');
   const btnExitGame = document.getElementById('btn-exit-game');
@@ -42,6 +49,7 @@ const App = (function() {
   function init() {
     setupEventListeners();
     setupNetworkHandlers();
+    window.refreshIcons();
 
     const randomAdjectives = ['Nova', 'Solar', 'Cyber', 'Cosmic', 'Astro', 'Orbit', 'Turbo', 'Neon'];
     const randomNouns = ['Rider', 'Pilot', 'Wolf', 'Star', 'Ghost', 'Legend', 'Fox', 'King'];
@@ -51,12 +59,11 @@ const App = (function() {
       Math.floor(Math.random() * 90 + 10);
     inputNickname.value = localStorage.getItem('ag_nickname') || randomName;
 
-    // Pre-fill room code if opened via shareable invite link (?room=XXXXX)
     const params = new URLSearchParams(window.location.search);
     const roomParam = params.get('room');
     if (roomParam) {
       inputJoinCode.value = roomParam.trim().toUpperCase().slice(0, 5);
-      showToast(`Room code ${inputJoinCode.value} loaded from invite link!`);
+      showToast(`Invite code ${inputJoinCode.value} ready! Click Join to enter.`);
     }
   }
 
@@ -69,6 +76,8 @@ const App = (function() {
       const isSoundOn = AntigravityAudio.toggle();
       btnSoundToggle.classList.toggle('disabled', !isSoundOn);
       btnSoundToggle.style.opacity = isSoundOn ? '1' : '0.4';
+      btnSoundToggle.innerHTML = `<i data-lucide="${isSoundOn ? 'volume-2' : 'volume-x'}"></i>`;
+      window.refreshIcons();
       if (isSoundOn) AntigravityAudio.playClick();
     });
 
@@ -103,12 +112,31 @@ const App = (function() {
     });
 
     btnCopyLink.addEventListener('click', () => {
-      const code = NetworkManager.getRoomCode();
-      if (!code) return;
-      const inviteUrl = `${window.location.origin}/?room=${code}`;
+      const inviteUrl = NetworkManager.getInviteUrl();
       navigator.clipboard.writeText(inviteUrl).then(() => {
-        showToast('Invite link copied! Share it with your friends.');
+        showToast('Invite link copied! Share it with friends.');
         AntigravityAudio.playClick();
+      });
+    });
+
+    btnShareInvite.addEventListener('click', async () => {
+      const code = NetworkManager.getRoomCode();
+      const inviteUrl = NetworkManager.getInviteUrl();
+      AntigravityAudio.playClick();
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Join my Antigravity Game Room!',
+            text: `Join my game session with code ${code}:`,
+            url: inviteUrl
+          });
+          return;
+        } catch (err) {
+          // User cancelled or unsupported, fallback to copy
+        }
+      }
+      navigator.clipboard.writeText(inviteUrl).then(() => {
+        showToast('Invite link copied to clipboard!');
       });
     });
 
@@ -132,7 +160,7 @@ const App = (function() {
       e.preventDefault();
       const text = inputGameChat.value.trim();
       if (text) {
-        if (activeGameType === 'draw-guess' && activeGame && activeGame.submitGuess) {
+        if ((activeGameType === 'draw-guess' || activeGameType === 'taboo-dash') && activeGame && activeGame.submitGuess) {
           activeGame.submitGuess(text);
         } else {
           NetworkManager.sendChat(text);
@@ -141,7 +169,6 @@ const App = (function() {
       }
     });
 
-    // Category Tabs
     document.querySelectorAll('.cat-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         const cat = tab.getAttribute('data-category');
@@ -150,7 +177,6 @@ const App = (function() {
       });
     });
 
-    // Game Cards
     document.querySelectorAll('.game-card').forEach(card => {
       card.addEventListener('click', () => {
         if (!NetworkManager.isHost()) return;
@@ -262,6 +288,7 @@ const App = (function() {
   function switchView(targetView) {
     document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
     targetView.classList.add('active');
+    window.refreshIcons();
   }
 
   function updateLobbyUI() {
@@ -291,6 +318,7 @@ const App = (function() {
       const li = document.createElement('li');
       if (p.isHost) li.classList.add('host');
       if (p.id === NetworkManager.getMyId()) li.classList.add('me');
+      if (p.connected === false) li.classList.add('reconnecting');
       li.innerHTML = `
         <div class="player-info">
           <span class="player-name" style="color: ${p.color}; font-weight: 600;">${escapeHTML(p.nickname)}</span>
@@ -345,14 +373,18 @@ const App = (function() {
     if (elSubview) elSubview.classList.add('active');
 
     const gameNames = {
-      'judgment-court': '⚖️ محكمة الأحكام',
-      'vibe-meter': '💞 مقياس المشاعر',
-      'whos-likely': '🎯 مين فينا؟',
-      'spy-game': '🕵️ الجاسوس في القعدة',
-      'astro-trail': '🚀 Astro Trail',
-      'draw-guess': '🎨 Cyber Sketch',
-      'neon-grid': '🌐 Neon Grid',
-      'cosmic-quiz': '🧠 Cosmic Quiz'
+      'judgment-court': 'محكمة الأحكام',
+      'vibe-meter': 'مقياس المشاعر والتوافق',
+      'whos-likely': 'مين فينا؟',
+      'spy-game': 'الجاسوس في القعدة',
+      'truth-bluff': 'حقيقة أم كذبة',
+      'taboo-dash': 'الكلمة الممنوعة',
+      'astro-trail': 'Astro Trail',
+      'draw-guess': 'Cyber Sketch',
+      'neon-grid': 'Neon Grid',
+      'cosmic-quiz': 'Cosmic Quiz',
+      'memory-matrix': 'Memory Matrix',
+      'reaction-duel': 'Reaction Duel'
     };
     titleCurrentGame.innerText = gameNames[gameType] || 'Game Arena';
     document.getElementById('game-timer').innerText = '--';

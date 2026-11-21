@@ -347,11 +347,10 @@ const CosmicQuizGame = (function() {
 
     let html = '<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px; text-align:left;">';
     leaderboard.forEach((pl, idx) => {
-      const medals = ['🥇', '🥈', '🥉', ''];
-      const medal = idx < 3 ? medals[idx] : '';
+      const rankBadge = idx === 0 ? '<i data-lucide="trophy" style="color:#ffd600;"></i>' : `#${idx + 1}`;
       html += `
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0;">
-          <span style="color:${pl.color}; font-weight:600;">${medal} ${idx + 1}. ${pl.nickname}</span>
+          <span style="color:${pl.color}; font-weight:600; display:inline-flex; align-items:center; gap:6px;">${rankBadge} ${pl.nickname}</span>
           <span style="font-family:var(--font-display); font-weight:800; color:var(--neon-cyan);">${pl.score} pts</span>
         </div>
       `;
@@ -359,6 +358,7 @@ const CosmicQuizGame = (function() {
     html += '</div>';
 
     overlayBody.innerHTML = html;
+    if (window.refreshIcons) window.refreshIcons();
     overlay.classList.remove('hidden');
 
     // Reset quiz if host clicks exit or it closes

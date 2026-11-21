@@ -179,11 +179,11 @@ const VibeMeterGame = (function() {
     if (!currentRound) {
       html += `
         <div class="social-card center-card">
-          <div class="social-big-emoji">💞</div>
+          <div class="social-icon-badge"><i data-lucide="heart-handshake"></i></div>
           <h3>مقياس المشاعر والتوافق</h3>
           <p>في كل جولة بنختار نجم من الشلة! النجم بيجاوب عن مشاعره بصراحة، والباقي بيحاولوا يتوقعوا إجابته عشان نقيس قد إيه فاهمين بعض!</p>
           ${isHost
-            ? `<button id="vm-start-btn" class="glow-btn-cyan">ابدأ اختبار المشاعر 💞</button>`
+            ? `<button id="vm-start-btn" class="glow-btn-cyan"><i data-lucide="play"></i> ابدأ اختبار المشاعر</button>`
             : `<p class="waiting-pulse">في انتظار المضيف لبدء الاختبار...</p>`}
         </div>
       `;
@@ -200,8 +200,8 @@ const VibeMeterGame = (function() {
           </div>
           <p class="vibe-subtitle">
             ${isSpotlight
-              ? '✨ جاوب بصراحة عن إحساسك الحقيقي (الشلة بتحاول تتوقع إجابتك!)'
-              : `🔮 توقّع: <strong>${currentRound.spotlightName}</strong> هيختار إيه؟`}
+              ? 'جاوب بصراحة عن إحساسك الحقيقي (الشلة بتحاول تتوقع إجابتك!)'
+              : `توقّع: <strong>${currentRound.spotlightName}</strong> هيختار إيه؟`}
           </p>
           <h3 class="social-question">${currentRound.question}</h3>
           <div class="social-options-grid">
@@ -245,14 +245,14 @@ const VibeMeterGame = (function() {
                 const isMatch = p.id !== currentRound.spotlightId && ans === spotAns;
                 return `
                   <span class="reveal-chip" style="border-color: ${p.color}; color: ${p.color};">
-                    ${p.nickname}: ${ans !== undefined ? (isMatch ? '✅ توقع صح!' : (p.id === currentRound.spotlightId ? '⭐ النجم' : '❌')) : '⏳'}
+                    ${p.nickname}: ${ans !== undefined ? (isMatch ? '<i data-lucide="check"></i> توقع صح' : (p.id === currentRound.spotlightId ? '<i data-lucide="star"></i> النجم' : '<i data-lucide="x"></i>')) : '<i data-lucide="clock"></i>'}
                   </span>
                 `;
               }).join('')}
             </div>
           </div>
           ${isHost
-            ? `<button id="vm-next-btn" class="glow-btn-cyan">النجم اللي بعده ✨</button>`
+            ? `<button id="vm-next-btn" class="glow-btn-cyan"><i data-lucide="arrow-right"></i> النجم اللي بعده</button>`
             : `<p class="waiting-pulse">في انتظار المضيف للجولة التالية...</p>`}
         `;
       }
@@ -262,6 +262,7 @@ const VibeMeterGame = (function() {
 
     html += `</div>`;
     stage.innerHTML = html;
+    if (window.refreshIcons) window.refreshIcons();
 
     const startBtn = document.getElementById('vm-start-btn');
     if (startBtn) startBtn.addEventListener('click', startNewRound);

@@ -3,23 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Antigravity Game Share - Multiplayer Social & Arcade</title>
-  <meta name="description" content="Zero-login real-time multiplayer gaming platform for friends. Play Social Hangout games (Judgment Court, Feelings Meter, Who's Most Likely, Spy) and Arcade games!">
+  <title>Antigravity Hub - Multiplayer Social & Arcade</title>
+  <meta name="description" content="Zero-login real-time multiplayer gaming platform for friends. 12 Social Hangout & Arcade games synced in real-time.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
+  <!-- Animated Aurora & Starfield Backdrop -->
+  <div class="aurora-bg">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
   <div id="starfield"></div>
 
   <button id="sound-toggle" class="glass-btn icon-btn" aria-label="Toggle Sound">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-      <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.063.922-2.063 2.063v4.874c0 1.141.922 2.062 2.063 2.062h1.932l4.5 4.5c.944.945 2.56.276 2.56-1.06V4.06zM18.57 8.43a.75.75 0 00-1.06 1.06 4 4 0 010 5.66.75.75 0 101.06 1.06 5.5 5.5 0 000-7.78z"/>
-      <path d="M21.4 5.6a.75.75 0 00-1.06 1.06 8 8 0 010 10.68.75.75 0 101.06 1.06 9.5 9.5 0 000-12.8z"/>
-    </svg>
+    <i data-lucide="volume-2"></i>
   </button>
 
   <main class="app-container">
@@ -27,53 +31,66 @@
     <!-- HOME VIEW -->
     <section id="home-view" class="view active">
       <header class="hero-header">
-        <div class="logo-container">
-          <h1 class="logo-glow">ANTIGRAVITY</h1>
-          <p class="subtitle-neon">Multiplayer Social & Arcade Hub</p>
+        <div class="hero-pill">
+          <i data-lucide="radio"></i>
+          <span>REAL-TIME MULTIPLAYER • ZERO LOGIN</span>
         </div>
+        <h1 class="logo-glow">ANTIGRAVITY</h1>
+        <p class="subtitle-neon">Social Hangout &amp; Arcade Hub</p>
       </header>
 
       <div class="card-grid">
         <div class="glass-card main-setup-card">
-          <h2 class="card-title">Enter Without Login</h2>
+          <div class="card-header-row">
+            <div class="header-icon-box cyan"><i data-lucide="sparkles"></i></div>
+            <div>
+              <h2 class="card-title">Jump Right In</h2>
+              <p class="card-subtitle">No account needed — just pick a name</p>
+            </div>
+          </div>
+
           <div class="input-group">
             <label for="player-nickname">Your Nickname / اسمك في القعدة</label>
             <input type="text" id="player-nickname" placeholder="AstroExplorer" maxlength="18" autocomplete="off">
           </div>
 
           <div class="action-buttons">
-            <button id="btn-host-mode" class="glow-btn-cyan">Create New Room / افتح قعدة جديدة</button>
+            <button id="btn-host-mode" class="glow-btn-cyan">
+              <i data-lucide="plus-circle"></i>
+              <span>Create New Room / افتح قعدة جديدة</span>
+            </button>
             <div class="divider"><span>OR JOIN FRIENDS</span></div>
             <div class="join-group">
-              <input type="text" id="join-code-input" placeholder="ROOM CODE" maxlength="5" autocomplete="off">
-              <button id="btn-join-mode" class="glow-btn-magenta">Join / ادخل</button>
+              <input type="text" id="join-code-input" placeholder="CODE" maxlength="5" autocomplete="off">
+              <button id="btn-join-mode" class="glow-btn-magenta">
+                <i data-lucide="log-in"></i>
+                <span>Join / ادخل</span>
+              </button>
             </div>
           </div>
         </div>
 
         <div class="glass-card info-card">
-          <h3>Two Worlds of Play</h3>
+          <h3>Two Worlds of Play (12 Games)</h3>
           <div class="mode-preview-list">
             <div class="mode-preview-item social">
-              <span class="mode-emoji">🔥</span>
+              <div class="mode-icon-box magenta"><i data-lucide="flame"></i></div>
               <div>
-                <strong>قعدة الأصحاب (Social & Hangout)</strong>
-                <p>محكمة الأحكام، مقياس المشاعر، مين فينا؟، والجاسوس — ألعاب تفاعلية لقعدة الصحاب.</p>
+                <strong>قعدة الأصحاب (6 Social Games)</strong>
+                <p>محكمة الأحكام، مقياس المشاعر، مين فينا؟، الجاسوس، حقيقة أم كذبة، والكلمة الممنوعة.</p>
               </div>
             </div>
             <div class="mode-preview-item arcade">
-              <span class="mode-emoji">🎮</span>
+              <div class="mode-icon-box cyan"><i data-lucide="gamepad-2"></i></div>
               <div>
-                <strong>أركيد وبازل (Arcade & Puzzle)</strong>
-                <p>Astro Trail, Cyber Sketch, Neon Grid & Cosmic Quiz — تحديات سريعة ومباشرة.</p>
+                <strong>أركيد وبازل (6 Arcade Games)</strong>
+                <p>Astro Trail, Cyber Sketch, Neon Grid, Cosmic Quiz, Memory Matrix &amp; Reaction Duel.</p>
               </div>
             </div>
           </div>
           <div class="p2p-badge">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-            </svg>
-            Real-Time Socket Server • Zero Login
+            <i data-lucide="shield-check"></i>
+            <span>Auto-Reconnect • Instant Share Links • Live Sync</span>
           </div>
         </div>
       </div>
@@ -89,8 +106,15 @@
             <div class="code-display-wrapper">
               <h2 id="room-code-display">-----</h2>
               <div class="code-btn-group">
-                <button id="btn-copy-code" class="glass-btn small-btn" title="Copy Code">Code</button>
-                <button id="btn-copy-link" class="glass-btn small-btn" title="Copy Invite Link">Link</button>
+                <button id="btn-copy-code" class="glass-btn small-btn" title="Copy Code">
+                  <i data-lucide="copy"></i>
+                </button>
+                <button id="btn-copy-link" class="glass-btn small-btn" title="Copy Invite Link">
+                  <i data-lucide="link"></i>
+                </button>
+                <button id="btn-share-invite" class="glass-btn small-btn" title="Share Invite">
+                  <i data-lucide="share-2"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -110,10 +134,8 @@
             <div id="chat-messages" class="chat-messages"></div>
             <form id="chat-form" class="chat-input-group">
               <input type="text" id="chat-input" placeholder="Type a message..." maxlength="150" autocomplete="off">
-              <button type="submit" class="send-btn">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                </svg>
+              <button type="submit" class="send-btn" aria-label="Send">
+                <i data-lucide="send"></i>
               </button>
             </form>
           </div>
@@ -126,124 +148,188 @@
               <p id="host-only-msg" class="neon-text-pulse">Only the host can launch games.</p>
             </div>
             <div class="category-tabs">
-              <button class="cat-tab active" data-category="social">🔥 قعدة الأصحاب (Social)</button>
-              <button class="cat-tab" data-category="arcade">🎮 أركيد وبازل (Arcade)</button>
+              <button class="cat-tab active" data-category="social">
+                <i data-lucide="flame"></i>
+                <span>قعدة الأصحاب (Social)</span>
+              </button>
+              <button class="cat-tab" data-category="arcade">
+                <i data-lucide="gamepad-2"></i>
+                <span>أركيد وبازل (Arcade)</span>
+              </button>
             </div>
           </div>
 
-          <!-- CATEGORY 1: SOCIAL & HANGOUT -->
+          <!-- CATEGORY 1: SOCIAL & HANGOUT (6 GAMES) -->
           <div id="cat-social" class="game-cards-container category-panel active">
             <div class="game-card selected" data-game="judgment-court" data-category="social">
-              <div class="game-card-icon">⚖️</div>
+              <div class="game-card-icon magenta"><i data-lucide="scale"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">تحديات وأحكام</div>
                 <h3>محكمة الأحكام</h3>
-                <p>أحكام وتحديات بمستويات (خفيف / حامي / نار) وتصويت مباشر من الشلة على التنفيذ + إضافة أحكام من تأليفكم!</p>
+                <p>أحكام وتحديات بـ 3 مستويات وتصويت مباشر من الشلة + إضافة أحكام من تأليفكم.</p>
                 <div class="game-meta">
-                  <span>👥 2-12 Players</span>
-                  <span>🔥 Interactive</span>
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="flame"></i> Interactive</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="vibe-meter" data-category="social">
-              <div class="game-card-icon">💞</div>
+              <div class="game-card-icon pink"><i data-lucide="heart-handshake"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">اختبار المشاعر</div>
                 <h3>مقياس المشاعر والتوافق</h3>
-                <p>اختبروا قد إيه فاهمين بعض! نجم الجولة بيجاوب عن مشاعره والباقي بيتوقعوا إجابته لحساب نسبة التوافق.</p>
+                <p>نجم الجولة بيجاوب عن مشاعره والباقي بيتوقعوا إجابته لحساب نسبة التوافق.</p>
                 <div class="game-meta">
-                  <span>👥 2-12 Players</span>
-                  <span>💞 Vibe Check</span>
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="activity"></i> Vibe Check</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="whos-likely" data-category="social">
-              <div class="game-card-icon">🎯</div>
+              <div class="game-card-icon cyan"><i data-lucide="crosshair"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">تصويت الشلة</div>
                 <h3>مين فينا؟</h3>
                 <p>أسئلة سريعة ومضحكة عن الشلة! كل واحد يصوّت سراً على أكتر شخص ينطبق عليه الموقف.</p>
                 <div class="game-meta">
-                  <span>👥 2-12 Players</span>
-                  <span>🗳️ Live Poll</span>
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="bar-chart-2"></i> Live Poll</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="spy-game" data-category="social">
-              <div class="game-card-icon">🕵️</div>
+              <div class="game-card-icon purple"><i data-lucide="venetian-mask"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">ذكاء وخداع</div>
                 <h3>الجاسوس في القعدة</h3>
-                <p>كلكم عارفين الكلمة السرية ما عدا الجاسوس! اسألوا بعض بذكاء واكشفوه قبل ما يخدعكم.</p>
+                <p>كلكم عارفين الكلمة السرية ما عدا الجاسوس! اسألوا بعض بذكاء واكشفوه.</p>
                 <div class="game-meta">
-                  <span>👥 3-12 Players</span>
-                  <span>🕵️ Deduction</span>
+                  <span><i data-lucide="users"></i> 3-12</span>
+                  <span><i data-lucide="eye-off"></i> Deduction</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="truth-bluff" data-category="social">
+              <div class="game-card-icon green"><i data-lucide="drama"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">كشف الكذب</div>
+                <h3>حقيقة أم كذبة</h3>
+                <p>اكتب 3 جمل عن نفسك (اتنين صح وواحدة كدب) وخلي الشلة تحاول تكشف الكذبة!</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="search"></i> Bluff</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="taboo-dash" data-category="social">
+              <div class="game-card-icon yellow"><i data-lucide="message-square-off"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">سرعة ووصف</div>
+                <h3>الكلمة الممنوعة</h3>
+                <p>اشرح الكلمة السرية لصحابك من غير ما تنطق أي كلمة من الكلمات المحظورة!</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="timer"></i> 45s Rush</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- CATEGORY 2: ARCADE & PUZZLE -->
+          <!-- CATEGORY 2: ARCADE & PUZZLE (6 GAMES) -->
           <div id="cat-arcade" class="game-cards-container category-panel">
             <div class="game-card" data-game="astro-trail" data-category="arcade">
-              <div class="game-card-icon">🚀</div>
+              <div class="game-card-icon cyan"><i data-lucide="rocket"></i></div>
               <div class="game-card-content">
                 <div class="game-badge">Action / Speed</div>
                 <h3>Astro Trail</h3>
-                <p>Pilot a glowing ship leaving a deadly neon trail. Cut off your friends and be the last survivor.</p>
+                <p>Pilot a glowing ship leaving a deadly neon trail. Cut off friends and survive.</p>
                 <div class="game-meta">
-                  <span>👥 1-4 Players</span>
-                  <span>⚡ Real-Time</span>
+                  <span><i data-lucide="users"></i> 1-4</span>
+                  <span><i data-lucide="zap"></i> Real-Time</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="draw-guess" data-category="arcade">
-              <div class="game-card-icon">🎨</div>
+              <div class="game-card-icon magenta"><i data-lucide="palette"></i></div>
               <div class="game-card-content">
                 <div class="game-badge">Party / Creative</div>
                 <h3>Cyber Sketch</h3>
-                <p>Draw the secret cosmic word on a synced canvas while friends race to type the right guess.</p>
+                <p>Draw the secret cosmic word on a synced canvas while friends race to guess.</p>
                 <div class="game-meta">
-                  <span>👥 2-8 Players</span>
-                  <span>🎨 Canvas Sync</span>
+                  <span><i data-lucide="users"></i> 2-8</span>
+                  <span><i data-lucide="pen-tool"></i> Canvas Sync</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="neon-grid" data-category="arcade">
-              <div class="game-card-icon">🌐</div>
+              <div class="game-card-icon purple"><i data-lucide="grid-3x3"></i></div>
               <div class="game-card-content">
                 <div class="game-badge">Strategy / Turn-Based</div>
                 <h3>Neon Grid</h3>
-                <p>Connect the dots on a holographic grid. Capture boxes to earn extra turns against friends or AI.</p>
+                <p>Connect dots on a holographic grid. Capture boxes to earn extra turns vs friends or AI.</p>
                 <div class="game-meta">
-                  <span>👥 1-4 Players</span>
-                  <span>🤖 VS Bot Ready</span>
+                  <span><i data-lucide="users"></i> 1-4</span>
+                  <span><i data-lucide="cpu"></i> VS Bot</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="cosmic-quiz" data-category="arcade">
-              <div class="game-card-icon">🧠</div>
+              <div class="game-card-icon green"><i data-lucide="brain-circuit"></i></div>
               <div class="game-card-content">
                 <div class="game-badge">Mind Game</div>
                 <h3>Cosmic Quiz</h3>
-                <p>Answer rapid-fire space & science trivia faster than your friends for speed bonus points.</p>
+                <p>Answer rapid-fire space &amp; science trivia faster than friends for speed bonuses.</p>
                 <div class="game-meta">
-                  <span>👥 1-12 Players</span>
-                  <span>⏱️ Timed Trivia</span>
+                  <span><i data-lucide="users"></i> 1-12</span>
+                  <span><i data-lucide="timer"></i> Timed Trivia</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="memory-matrix" data-category="arcade">
+              <div class="game-card-icon yellow"><i data-lucide="layout-grid"></i></div>
+              <div class="game-card-content">
+                <div class="game-badge">Puzzle / Memory</div>
+                <h3>Memory Matrix</h3>
+                <p>Flip glowing neon tiles and match icon pairs to claim points and steal turns.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 1-6</span>
+                  <span><i data-lucide="layers"></i> 4x4 Grid</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="reaction-duel" data-category="arcade">
+              <div class="game-card-icon pink"><i data-lucide="zap"></i></div>
+              <div class="game-card-content">
+                <div class="game-badge">Reflex / Duel</div>
+                <h3>Reaction Duel</h3>
+                <p>Wait for the neon pad to flash green, then tap first! Measured to the millisecond.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 1-12</span>
+                  <span><i data-lucide="gauge"></i> Reflex</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="lobby-actions">
-            <button id="btn-leave-lobby" class="glass-btn danger-hover-btn">Leave Room</button>
-            <button id="btn-start-game" class="glow-btn-cyan">Launch Game</button>
+            <button id="btn-leave-lobby" class="glass-btn danger-hover-btn">
+              <i data-lucide="log-out"></i>
+              <span>Leave Room</span>
+            </button>
+            <button id="btn-start-game" class="glow-btn-cyan">
+              <i data-lucide="play"></i>
+              <span>Launch Game</span>
+            </button>
           </div>
         </div>
       </div>
@@ -256,10 +342,8 @@
         <div class="game-stage-container glass-card">
           <div class="stage-header">
             <button id="btn-exit-game" class="glass-btn small-btn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-              </svg>
-              Back to Lobby
+              <i data-lucide="arrow-left"></i>
+              <span>Back to Lobby</span>
             </button>
             <h2 id="current-game-title">Game Title</h2>
             <div id="game-timer" class="game-timer">--</div>
@@ -308,6 +392,14 @@
               </div>
             </div>
 
+            <div id="game-memory-matrix" class="game-subview">
+              <div id="memory-matrix-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-reaction-duel" class="game-subview">
+              <div id="reaction-duel-stage" class="social-stage-fill"></div>
+            </div>
+
             <!-- Social Hangout Subviews -->
             <div id="game-judgment-court" class="game-subview">
               <div id="judgment-court-stage" class="social-stage-fill"></div>
@@ -323,6 +415,14 @@
 
             <div id="game-spy-game" class="game-subview">
               <div id="spy-game-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-truth-bluff" class="game-subview">
+              <div id="truth-bluff-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-taboo-dash" class="game-subview">
+              <div id="taboo-dash-stage" class="social-stage-fill"></div>
             </div>
 
             <!-- Generic Overlay -->
@@ -347,10 +447,8 @@
             <div id="game-chat-messages" class="chat-messages"></div>
             <form id="game-chat-form" class="chat-input-group">
               <input type="text" id="game-chat-input" placeholder="Type guess or chat..." maxlength="150" autocomplete="off">
-              <button type="submit" class="send-btn">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                </svg>
+              <button type="submit" class="send-btn" aria-label="Send">
+                <i data-lucide="send"></i>
               </button>
             </form>
           </div>
@@ -374,10 +472,14 @@
   <script src="/js/games/draw-guess.js"></script>
   <script src="/js/games/neon-grid.js"></script>
   <script src="/js/games/cosmic-quiz.js"></script>
+  <script src="/js/games/memory-matrix.js"></script>
+  <script src="/js/games/reaction-duel.js"></script>
   <script src="/js/games/judgment-court.js"></script>
   <script src="/js/games/vibe-meter.js"></script>
   <script src="/js/games/whos-likely.js"></script>
   <script src="/js/games/spy-game.js"></script>
+  <script src="/js/games/truth-bluff.js"></script>
+  <script src="/js/games/taboo-dash.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

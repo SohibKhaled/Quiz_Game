@@ -1,4 +1,4 @@
-// Socket.IO Real-Time Multiplayer Network Manager
+// Socket.IO Real-Time Multiplayer Network Manager with Auto-Reconnect & Session Persistence
 const NetworkManager = (function() {
   let socket = null;
   let isHostFlag = false;
@@ -6,6 +6,13 @@ const NetworkManager = (function() {
   let nickname = '';
   let players = [];
   let myId = '';
+
+  // Persistent sessionId per browser tab so brief disconnects/refreshes keep the player's seat
+  let sessionId = sessionStorage.getItem('ag_session_id');
+  if (!sessionId) {
+    sessionId = 'sid_' + Math.random().toString(36).slice(2, 11) + Date.now().toString(36);
+    sessionStorage.setItem('ag_session_id', sessionId);
+  }
 
   const handlers = {
     onStatusChange: () => {},
@@ -29,13 +36,19 @@ const NetworkManager = (function() {
 
     socket = io({
       reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000
+      reconnectionAttempts: 15,
+      reconnectionDelay: 800,
+      reconnectionDelayMax: 4000
     });
 
     socket.on('connect', () => {
       myId = socket.id;
-      handlers.onStatusChange('Connected to Server', true);
+      if (roomCode && nickname) {
+        // Automatically rejoin room if we were already in one
+        socket.emit('join_room', { nickname, code: roomCode, sessionId });
+      } else {
+        handlers.onStatusChange('Connected to Server', true);
+      }
     });
 
     socket.on('disconnect', () => {
@@ -47,6 +60,7 @@ const NetworkManager = (function() {
       myId = data.playerId;
       players = data.players;
       isHostFlag = true;
+      sessionStorage.setItem('ag_active_room', roomCode);
       handlers.onStatusChange(`Hosting: ${roomCode}`, true);
       handlers.onRoomCreated(roomCode, data.selectedGame);
       handlers.onPlayerUpdate(players);
@@ -57,7 +71,8 @@ const NetworkManager = (function() {
       roomCode = data.code;
       myId = data.playerId;
       players = data.players;
-      isHostFlag = false;
+      isHostFlag = Boolean(data.isHost);
+      sessionStorage.setItem('ag_active_room', roomCode);
       handlers.onStatusChange(`In Room: ${roomCode}`, true);
       handlers.onJoined(data.selectedGame, data.activeGame);
       handlers.onPlayerUpdate(players);
@@ -65,6 +80,8 @@ const NetworkManager = (function() {
     });
 
     socket.on('join_error', (data) => {
+      roomCode = '';
+      sessionStorage.removeItem('ag_active_room');
       handlers.onError(data.message || 'Could not join room.');
     });
 
@@ -107,19 +124,18 @@ const NetworkManager = (function() {
     hostRoom: function(userNickname) {
       nickname = userNickname || 'Host';
       const s = ensureSocket();
-      s.emit('create_room', { nickname });
+      s.emit('create_room', { nickname, sessionId });
     },
 
     joinRoom: function(userNickname, code) {
       nickname = userNickname || 'Guest';
       roomCode = code.toUpperCase().trim();
       const s = ensureSocket();
-      s.emit('join_room', { nickname, code: roomCode });
+      s.emit('join_room', { nickname, code: roomCode, sessionId });
     },
 
     sendChat: function(text) {
       if (!text || !text.trim() || !socket) return;
-      // Support legacy "SYSTEM: ..." calls from games
       if (text.startsWith('SYSTEM:')) {
         socket.emit('chat_message', { text: text.replace(/^SYSTEM:\s*/, ''), system: true });
       } else {
@@ -164,7 +180,12 @@ const NetworkManager = (function() {
       isHostFlag = false;
       roomCode = '';
       players = [];
+      sessionStorage.removeItem('ag_active_room');
       handlers.onStatusChange('Connected to Server', true);
+    },
+
+    getInviteUrl: function() {
+      return roomCode ? `${window.location.origin}/?room=${roomCode}` : window.location.origin;
     },
 
     isHost: function() { return isHostFlag; },
