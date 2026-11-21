@@ -344,7 +344,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Antigravity Game Share server running on port ${PORT}`);
+  console.log(`Sohib Games server running on port ${PORT}`);
 
   const externalUrl = process.env.RENDER_EXTERNAL_URL || process.env.KEEP_ALIVE_URL;
   if (externalUrl) {

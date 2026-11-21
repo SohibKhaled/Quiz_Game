@@ -1,5 +1,5 @@
 {
-  "name": "antigravity-game-share",
+  "name": "sohib-games",
   "version": "2.0.0",
   "description": "Real-time multiplayer social & arcade gaming platform powered by Express and Socket.IO, ready for Render.",
   "main": "server.js",

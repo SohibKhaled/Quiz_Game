@@ -126,7 +126,7 @@ const App = (function() {
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'Join my Antigravity Game Room!',
+            title: 'Join my Sohib Games Room!',
             text: `Join my game session with code ${code}:`,
             url: inviteUrl
           });

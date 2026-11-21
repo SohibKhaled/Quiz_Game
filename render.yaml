@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: antigravity-game-share
+    name: sohib-games
     env: node
     plan: free
     buildCommand: npm install

@@ -1,4 +1,4 @@
-# Antigravity Game Share (Social & Arcade Multiplayer)
+# Sohib Games (Social & Arcade Multiplayer)
 
 A zero-login, real-time multiplayer gaming platform powered by **Node.js**, **Express**, and **Socket.IO**, designed for **Render** deployment.
 
