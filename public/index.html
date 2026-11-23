@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sohib Games - Multiplayer Social & Arcade</title>
-  <meta name="description" content="Zero-login real-time multiplayer gaming platform for friends. 12 Social Hangout & Arcade games synced in real-time.">
+  <title>Sohib Games - Multiplayer Social &amp; Arcade</title>
+  <meta name="description" content="Zero-login multiplayer gaming platform for friends. Play Online or on One Device (Offline Ready) with 16 Social Hangout & Arcade games.">
+  <meta name="theme-color" content="#05020d">
+  <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
@@ -14,7 +16,6 @@
 </head>
 <body>
 
-  <!-- Animated Aurora & Starfield Backdrop -->
   <div class="aurora-bg">
     <div class="aurora-orb orb-1"></div>
     <div class="aurora-orb orb-2"></div>
@@ -33,7 +34,7 @@
       <header class="hero-header">
         <div class="hero-pill">
           <i data-lucide="radio"></i>
-          <span>REAL-TIME MULTIPLAYER • ZERO LOGIN</span>
+          <span>ONLINE + SINGLE-DEVICE OFFLINE • ZERO LOGIN</span>
         </div>
         <h1 class="logo-glow">SOHIB GAMES</h1>
         <p class="subtitle-neon">Social Hangout &amp; Arcade Hub</p>
@@ -45,7 +46,7 @@
             <div class="header-icon-box cyan"><i data-lucide="sparkles"></i></div>
             <div>
               <h2 class="card-title">Jump Right In</h2>
-              <p class="card-subtitle">No account needed — just pick a name</p>
+              <p class="card-subtitle">Play online with friends or on one device together</p>
             </div>
           </div>
 
@@ -57,9 +58,15 @@
           <div class="action-buttons">
             <button id="btn-host-mode" class="glow-btn-cyan">
               <i data-lucide="plus-circle"></i>
-              <span>Create New Room / افتح قعدة جديدة</span>
+              <span>Create Online Room / افتح غرفة أونلاين</span>
             </button>
-            <div class="divider"><span>OR JOIN FRIENDS</span></div>
+
+            <button id="btn-local-mode" class="glow-btn-purple">
+              <i data-lucide="smartphone"></i>
+              <span>Play on One Device / قعدة على جهاز واحد</span>
+            </button>
+
+            <div class="divider"><span>OR JOIN ONLINE ROOM</span></div>
             <div class="join-group">
               <input type="text" id="join-code-input" placeholder="CODE" maxlength="5" autocomplete="off">
               <button id="btn-join-mode" class="glow-btn-magenta">
@@ -71,13 +78,13 @@
         </div>
 
         <div class="glass-card info-card">
-          <h3>Two Worlds of Play (12 Games)</h3>
+          <h3>Two Worlds of Play (16 Games)</h3>
           <div class="mode-preview-list">
             <div class="mode-preview-item social">
               <div class="mode-icon-box magenta"><i data-lucide="flame"></i></div>
               <div>
-                <strong>قعدة الأصحاب (6 Social Games)</strong>
-                <p>محكمة الأحكام، مقياس المشاعر، مين فينا؟، الجاسوس، حقيقة أم كذبة، والكلمة الممنوعة.</p>
+                <strong>قعدة الأصحاب والأسئلة (10 Social Games)</strong>
+                <p>صراحة وجرأة، كرسي الاعتراف، تحدي 5 ثواني، لو خيروك، محكمة الأحكام، مقياس المشاعر، مين فينا، الجاسوس، حقيقة أم كذبة، والكلمة الممنوعة.</p>
               </div>
             </div>
             <div class="mode-preview-item arcade">
@@ -89,8 +96,8 @@
             </div>
           </div>
           <div class="p2p-badge">
-            <i data-lucide="shield-check"></i>
-            <span>Auto-Reconnect • Instant Share Links • Live Sync</span>
+            <i data-lucide="wifi-off"></i>
+            <span>Low Data • Offline Pass &amp; Play • Auto-Reconnect</span>
           </div>
         </div>
       </div>
@@ -102,10 +109,10 @@
 
         <aside class="lobby-sidebar glass-card">
           <div class="room-code-panel">
-            <span class="panel-label">Session Code</span>
+            <span class="panel-label" id="session-mode-label">Session Code</span>
             <div class="code-display-wrapper">
               <h2 id="room-code-display">-----</h2>
-              <div class="code-btn-group">
+              <div class="code-btn-group" id="online-share-btns">
                 <button id="btn-copy-code" class="glass-btn small-btn" title="Copy Code">
                   <i data-lucide="copy"></i>
                 </button>
@@ -122,14 +129,34 @@
           <div class="players-panel">
             <div class="panel-header">
               <h3>Crew List</h3>
-              <span id="player-count-badge" class="badge">1/12</span>
+              <div class="panel-header-actions">
+                <button id="btn-random-pick" class="glass-btn xs-btn" title="قرعة الشلة (Random Picker)">
+                  <i data-lucide="dices"></i>
+                  <span>قرعة</span>
+                </button>
+                <span id="player-count-badge" class="badge">1/12</span>
+              </div>
             </div>
+
+            <!-- Add Player form for Single-Device Pass & Play -->
+            <form id="local-add-player-form" class="local-add-form hidden">
+              <input type="text" id="local-player-name-input" placeholder="أضف اسم صاحبك..." maxlength="18" autocomplete="off">
+              <button type="submit" class="send-btn" title="Add Player">
+                <i data-lucide="user-plus"></i>
+              </button>
+            </form>
+
             <ul id="players-list" class="players-list"></ul>
           </div>
 
           <div class="chat-panel">
             <div class="panel-header">
-              <h3>Comms Chat</h3>
+              <h3>Comms &amp; Reactions</h3>
+              <div class="reaction-mini-bar">
+                <button type="button" class="react-btn" data-react="flame" title="نار"><i data-lucide="flame"></i></button>
+                <button type="button" class="react-btn" data-react="laugh" title="ضحك"><i data-lucide="laugh"></i></button>
+                <button type="button" class="react-btn" data-react="thumbs-up" title="عاش"><i data-lucide="thumbs-up"></i></button>
+              </div>
             </div>
             <div id="chat-messages" class="chat-messages"></div>
             <form id="chat-form" class="chat-input-group">
@@ -150,32 +177,84 @@
             <div class="category-tabs">
               <button class="cat-tab active" data-category="social">
                 <i data-lucide="flame"></i>
-                <span>قعدة الأصحاب (Social)</span>
+                <span>قعدة الأصحاب (10)</span>
               </button>
               <button class="cat-tab" data-category="arcade">
                 <i data-lucide="gamepad-2"></i>
-                <span>أركيد وبازل (Arcade)</span>
+                <span>أركيد وبازل (6)</span>
               </button>
             </div>
           </div>
 
-          <!-- CATEGORY 1: SOCIAL & HANGOUT (6 GAMES) -->
+          <!-- CATEGORY 1: SOCIAL & HANGOUT (10 GAMES) -->
           <div id="cat-social" class="game-cards-container category-panel active">
-            <div class="game-card selected" data-game="judgment-court" data-category="social">
-              <div class="game-card-icon magenta"><i data-lucide="scale"></i></div>
+            <div class="game-card selected" data-game="truth-dare" data-category="social">
+              <div class="game-card-icon magenta"><i data-lucide="flame"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">صراحة وتحدي • جهاز واحد أو أونلاين</div>
+                <h3>صراحة وجرأة</h3>
+                <p>اختار صراحة أو جرأة بـ 3 مستويات مختلفة مع أسئلة وتحديات قوية للقعدة.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="smartphone"></i> Pass &amp; Play</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="deep-talk" data-category="social">
+              <div class="game-card-icon cyan"><i data-lucide="armchair"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">أسئلة عميقة • جهاز واحد أو أونلاين</div>
+                <h3>كرسي الاعتراف</h3>
+                <p>أسئلة عميقة وصريحة تقرّب الشلة من بعض وتفتح حوارات من القلب.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="heart"></i> Deep Talk</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="five-seconds" data-category="social">
+              <div class="game-card-icon yellow"><i data-lucide="timer"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">سرعة وضحك • جهاز واحد أو أونلاين</div>
+                <h3>تحدي الـ 5 ثواني</h3>
+                <p>اذكر 3 حاجات في 5 ثواني بس قبل ما الجرس يضرب!</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="zap"></i> 5s Buzzer</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="would-you-rather" data-category="social">
+              <div class="game-card-icon purple"><i data-lucide="split"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">اختيارات صعبة • جهاز واحد أو أونلاين</div>
+                <h3>لو خيروك؟</h3>
+                <p>مواقف واختيارات صعبة! صوّتوا وشوفوا نسب الشلة في كل اختيار.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="smartphone"></i> Pass &amp; Play</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="judgment-court" data-category="social">
+              <div class="game-card-icon pink"><i data-lucide="scale"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">تحديات وأحكام</div>
                 <h3>محكمة الأحكام</h3>
-                <p>أحكام وتحديات بـ 3 مستويات وتصويت مباشر من الشلة + إضافة أحكام من تأليفكم.</p>
+                <p>أحكام وتحديات وتصويت مباشر من الشلة + إضافة أحكام من تأليفكم.</p>
                 <div class="game-meta">
                   <span><i data-lucide="users"></i> 2-12</span>
-                  <span><i data-lucide="flame"></i> Interactive</span>
+                  <span><i data-lucide="gavel"></i> Interactive</span>
                 </div>
               </div>
             </div>
 
             <div class="game-card" data-game="vibe-meter" data-category="social">
-              <div class="game-card-icon pink"><i data-lucide="heart-handshake"></i></div>
+              <div class="game-card-icon green"><i data-lucide="heart-handshake"></i></div>
               <div class="game-card-content rtl-text">
                 <div class="game-badge">اختبار المشاعر</div>
                 <h3>مقياس المشاعر والتوافق</h3>
@@ -192,7 +271,7 @@
               <div class="game-card-content rtl-text">
                 <div class="game-badge">تصويت الشلة</div>
                 <h3>مين فينا؟</h3>
-                <p>أسئلة سريعة ومضحكة عن الشلة! كل واحد يصوّت سراً على أكتر شخص ينطبق عليه الموقف.</p>
+                <p>أسئلة سريعة ومضحكة عن الشلة! صوّت سراً على أكتر شخص ينطبق عليه الوصف.</p>
                 <div class="game-meta">
                   <span><i data-lucide="users"></i> 2-12</span>
                   <span><i data-lucide="bar-chart-2"></i> Live Poll</span>
@@ -324,7 +403,7 @@
           <div class="lobby-actions">
             <button id="btn-leave-lobby" class="glass-btn danger-hover-btn">
               <i data-lucide="log-out"></i>
-              <span>Leave Room</span>
+              <span>Leave</span>
             </button>
             <button id="btn-start-game" class="glow-btn-cyan">
               <i data-lucide="play"></i>
@@ -401,6 +480,22 @@
             </div>
 
             <!-- Social Hangout Subviews -->
+            <div id="game-truth-dare" class="game-subview">
+              <div id="truth-dare-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-deep-talk" class="game-subview">
+              <div id="deep-talk-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-five-seconds" class="game-subview">
+              <div id="five-seconds-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-would-you-rather" class="game-subview">
+              <div id="would-you-rather-stage" class="social-stage-fill"></div>
+            </div>
+
             <div id="game-judgment-court" class="game-subview">
               <div id="judgment-court-stage" class="social-stage-fill"></div>
             </div>
@@ -425,7 +520,6 @@
               <div id="taboo-dash-stage" class="social-stage-fill"></div>
             </div>
 
-            <!-- Generic Overlay -->
             <div id="game-overlay" class="game-overlay hidden">
               <div class="overlay-content glass-card">
                 <h2 id="overlay-title">Ready?</h2>
@@ -474,6 +568,10 @@
   <script src="/js/games/cosmic-quiz.js"></script>
   <script src="/js/games/memory-matrix.js"></script>
   <script src="/js/games/reaction-duel.js"></script>
+  <script src="/js/games/truth-dare.js"></script>
+  <script src="/js/games/deep-talk.js"></script>
+  <script src="/js/games/five-seconds.js"></script>
+  <script src="/js/games/would-you-rather.js"></script>
   <script src="/js/games/judgment-court.js"></script>
   <script src="/js/games/vibe-meter.js"></script>
   <script src="/js/games/whos-likely.js"></script>

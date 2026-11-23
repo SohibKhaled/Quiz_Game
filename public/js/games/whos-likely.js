@@ -5,6 +5,7 @@ const WhosLikelyGame = (function() {
   let players = [];
   let scores = {};
   let usedPrompts = new Set();
+  let localTurnIdx = 0;
 
   let currentRound = null; // { prompt, votes: { [voterId]: targetId }, status: 'voting'|'revealed' }
 
@@ -54,6 +55,7 @@ const WhosLikelyGame = (function() {
     const prompt = available[Math.floor(Math.random() * available.length)];
     usedPrompts.add(prompt);
 
+    localTurnIdx = 0;
     currentRound = {
       prompt,
       votes: {},
@@ -72,6 +74,14 @@ const WhosLikelyGame = (function() {
 
   function castVote(targetId) {
     if (!currentRound || currentRound.status !== 'voting') return;
+    if (NetworkManager.isLocalMode()) {
+      const voter = players[localTurnIdx];
+      if (!voter) return;
+      localTurnIdx++;
+      recordVote(voter.id, targetId);
+      if (typeof AntigravityAudio !== 'undefined') AntigravityAudio.playClick();
+      return;
+    }
     if (currentRound.votes[myId]) return;
 
     if (isHost) {
@@ -170,11 +180,19 @@ const WhosLikelyGame = (function() {
         </div>
       `;
     } else {
-      const myVote = currentRound.votes[myId];
+      const isLocal = NetworkManager.isLocalMode();
+      const myVote = isLocal ? null : currentRound.votes[myId];
       const totalVotes = Object.keys(currentRound.votes).length;
+      const localVoter = isLocal ? players[localTurnIdx] : null;
 
       html += `
         <div class="social-card">
+          ${currentRound.status === 'voting' && isLocal && localVoter ? `
+            <div class="target-banner" style="border-color: ${localVoter.color};">
+              <span>مرّر الموبايل لـ:</span>
+              <strong style="color: ${localVoter.color};">${localVoter.nickname}</strong>
+            </div>
+          ` : ''}
           <h3 class="social-question">${currentRound.prompt}</h3>
       `;
 

@@ -1,0 +1,9 @@
+{
+  "name": "Sohib Games - Social & Arcade Hub",
+  "short_name": "Sohib Games",
+  "description": "Multiplayer Social Hangout & Arcade Games — Online or Single-Device Offline",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05020d",
+  "theme_color": "#00f0ff"
+}

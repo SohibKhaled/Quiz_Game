@@ -8,7 +8,7 @@ window.refreshIcons = function() {
 const App = (function() {
   let activeGame = null;
   let activeGameType = '';
-  let selectedGameType = 'judgment-court';
+  let selectedGameType = 'truth-dare';
   let activeCategory = 'social';
 
   const elHomeView = document.getElementById('home-view');
@@ -19,15 +19,21 @@ const App = (function() {
   const inputJoinCode = document.getElementById('join-code-input');
 
   const btnHostMode = document.getElementById('btn-host-mode');
+  const btnLocalMode = document.getElementById('btn-local-mode');
   const btnJoinMode = document.getElementById('btn-join-mode');
   const btnCopyCode = document.getElementById('btn-copy-code');
   const btnCopyLink = document.getElementById('btn-copy-link');
   const btnShareInvite = document.getElementById('btn-share-invite');
+  const btnRandomPick = document.getElementById('btn-random-pick');
   const btnLeaveLobby = document.getElementById('btn-leave-lobby');
   const btnStartGame = document.getElementById('btn-start-game');
   const btnExitGame = document.getElementById('btn-exit-game');
 
   const displayRoomCode = document.getElementById('room-code-display');
+  const labelSessionMode = document.getElementById('session-mode-label');
+  const onlineShareBtns = document.getElementById('online-share-btns');
+  const localAddForm = document.getElementById('local-add-player-form');
+  const localPlayerInput = document.getElementById('local-player-name-input');
   const badgePlayerCount = document.getElementById('player-count-badge');
   const listPlayers = document.getElementById('players-list');
   const msgHostOnly = document.getElementById('host-only-msg');
@@ -50,6 +56,10 @@ const App = (function() {
     setupEventListeners();
     setupNetworkHandlers();
     window.refreshIcons();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
 
     const randomAdjectives = ['Nova', 'Solar', 'Cyber', 'Cosmic', 'Astro', 'Orbit', 'Turbo', 'Neon'];
     const randomNouns = ['Rider', 'Pilot', 'Wolf', 'Star', 'Ghost', 'Legend', 'Fox', 'King'];
@@ -89,6 +99,13 @@ const App = (function() {
       NetworkManager.hostRoom(nick);
     });
 
+    btnLocalMode.addEventListener('click', () => {
+      const nick = inputNickname.value.trim() || 'لاعب 1';
+      localStorage.setItem('ag_nickname', nick);
+      AntigravityAudio.playClick();
+      NetworkManager.startLocalMode([nick, 'صاحبك 2']);
+    });
+
     btnJoinMode.addEventListener('click', () => {
       const nick = inputNickname.value.trim();
       const code = inputJoinCode.value.trim().toUpperCase();
@@ -100,6 +117,32 @@ const App = (function() {
       localStorage.setItem('ag_nickname', nick);
       AntigravityAudio.playClick();
       NetworkManager.joinRoom(nick, code);
+    });
+
+    localAddForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = localPlayerInput.value.trim();
+      if (name && NetworkManager.addLocalPlayer(name)) {
+        localPlayerInput.value = '';
+      }
+    });
+
+    btnRandomPick.addEventListener('click', () => {
+      const players = NetworkManager.getPlayers();
+      if (!players.length) return;
+      const chosen = players[Math.floor(Math.random() * players.length)];
+      AntigravityAudio.playScore();
+      showToast(`قرعة الشلة اختارت: ${chosen.nickname}`);
+      NetworkManager.sendChat(`SYSTEM: قرعة الشلة اختارت: ${chosen.nickname}`);
+    });
+
+    document.querySelectorAll('.react-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const reactMap = { flame: 'نار يا شلة!', laugh: 'ههههههه!', 'thumbs-up': 'عاش يا بطل!' };
+        const key = btn.getAttribute('data-react');
+        AntigravityAudio.playClick();
+        NetworkManager.sendChat(reactMap[key] || 'Nice!');
+      });
     });
 
     btnCopyCode.addEventListener('click', () => {
@@ -131,9 +174,7 @@ const App = (function() {
             url: inviteUrl
           });
           return;
-        } catch (err) {
-          // User cancelled or unsupported, fallback to copy
-        }
+        } catch (err) {}
       }
       navigator.clipboard.writeText(inviteUrl).then(() => {
         showToast('Invite link copied to clipboard!');
@@ -232,23 +273,31 @@ const App = (function() {
     });
 
     NetworkManager.registerHandler('onRoomCreated', (code, initialGame) => {
-      displayRoomCode.innerText = code;
+      const isLocal = NetworkManager.isLocalMode();
+      displayRoomCode.innerText = isLocal ? '1 DEVICE' : code;
+      labelSessionMode.innerText = isLocal ? 'Pass & Play Mode' : 'Session Code';
+      onlineShareBtns.classList.toggle('hidden', isLocal);
+      localAddForm.classList.toggle('hidden', !isLocal);
+
       if (initialGame) selectedGameType = initialGame;
       containerLobbyChat.innerHTML = '';
       switchView(elLobbyView);
       updateLobbyUI();
-      showToast(`Room ${code} created! Share the code or link with friends.`);
+      showToast(isLocal
+        ? 'تم فتح قعدة على جهاز واحد! أضف أسماء صحابك وابدأوا اللعب.'
+        : `Room ${code} created! Share the code or link with friends.`);
     });
 
     NetworkManager.registerHandler('onJoined', (initialGame, runningGame) => {
       displayRoomCode.innerText = NetworkManager.getRoomCode();
+      labelSessionMode.innerText = 'Session Code';
+      onlineShareBtns.classList.remove('hidden');
+      localAddForm.classList.add('hidden');
       if (initialGame) selectedGameType = initialGame;
       containerLobbyChat.innerHTML = '';
       switchView(elLobbyView);
       updateLobbyUI();
-      if (runningGame) {
-        launchGameView(runningGame);
-      }
+      if (runningGame) launchGameView(runningGame);
     });
 
     NetworkManager.registerHandler('onPlayerUpdate', (players) => {
@@ -264,9 +313,7 @@ const App = (function() {
     NetworkManager.registerHandler('onGameSelected', (gameType) => {
       selectedGameType = gameType;
       const card = document.querySelector(`.game-card[data-game="${gameType}"]`);
-      if (card) {
-        switchCategory(card.getAttribute('data-category'));
-      }
+      if (card) switchCategory(card.getAttribute('data-category'));
       updateGameSelectionUI();
     });
 
@@ -275,9 +322,7 @@ const App = (function() {
     });
 
     NetworkManager.registerHandler('onGameData', (senderId, payload) => {
-      if (activeGame && activeGame.handleData) {
-        activeGame.handleData(senderId, payload);
-      }
+      if (activeGame && activeGame.handleData) activeGame.handleData(senderId, payload);
     });
 
     NetworkManager.registerHandler('onGameExit', () => {
@@ -314,19 +359,35 @@ const App = (function() {
   function updatePlayersList(players) {
     listPlayers.innerHTML = '';
     badgePlayerCount.innerText = `${players.length}/12`;
+    const isLocal = NetworkManager.isLocalMode();
+
     players.forEach(p => {
       const li = document.createElement('li');
       if (p.isHost) li.classList.add('host');
-      if (p.id === NetworkManager.getMyId()) li.classList.add('me');
+      if (!isLocal && p.id === NetworkManager.getMyId()) li.classList.add('me');
       if (p.connected === false) li.classList.add('reconnecting');
+
+      const removeBtn = (isLocal && players.length > 1)
+        ? `<button type="button" class="remove-local-btn" data-id="${p.id}" title="Remove"><i data-lucide="x"></i></button>`
+        : `<span class="role-badge ${p.isHost ? 'host' : 'guest'}">${p.isHost ? 'Host' : 'Player'}</span>`;
+
       li.innerHTML = `
         <div class="player-info">
           <span class="player-name" style="color: ${p.color}; font-weight: 600;">${escapeHTML(p.nickname)}</span>
         </div>
-        <span class="role-badge ${p.isHost ? 'host' : 'guest'}">${p.isHost ? 'Host' : 'Guest'}</span>
+        ${removeBtn}
       `;
       listPlayers.appendChild(li);
     });
+
+    if (isLocal) {
+      listPlayers.querySelectorAll('.remove-local-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          NetworkManager.removeLocalPlayer(btn.getAttribute('data-id'));
+        });
+      });
+      window.refreshIcons();
+    }
   }
 
   function addChatMessage(container, sender, text, isSystem, color) {
@@ -373,6 +434,10 @@ const App = (function() {
     if (elSubview) elSubview.classList.add('active');
 
     const gameNames = {
+      'truth-dare': 'صراحة وجرأة',
+      'deep-talk': 'كرسي الاعتراف',
+      'five-seconds': 'تحدي الـ 5 ثواني',
+      'would-you-rather': 'لو خيروك؟',
       'judgment-court': 'محكمة الأحكام',
       'vibe-meter': 'مقياس المشاعر والتوافق',
       'whos-likely': 'مين فينا؟',
@@ -436,7 +501,7 @@ const App = (function() {
 
       scoresArray.forEach(s => {
         const li = document.createElement('li');
-        if (s.id === NetworkManager.getMyId()) li.classList.add('player-active');
+        if (!NetworkManager.isLocalMode() && s.id === NetworkManager.getMyId()) li.classList.add('player-active');
         li.innerHTML = `
           <span class="score-name" style="color: ${s.color}; font-weight: 600;">${escapeHTML(s.nickname)}</span>
           <span class="score-num">${s.score}</span>

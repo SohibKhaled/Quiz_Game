@@ -5,6 +5,7 @@ const VibeMeterGame = (function() {
   let players = [];
   let scores = {};
   let rotationIdx = 0;
+  let localTurnIdx = 0;
 
   let currentRound = null; // { spotlightId, spotlightName, spotlightColor, question, options, answers: { [id]: idx }, status: 'answering'|'revealed' }
 
@@ -71,6 +72,7 @@ const VibeMeterGame = (function() {
     rotationIdx++;
     const qObj = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
 
+    localTurnIdx = 0;
     currentRound = {
       spotlightId: spotlight.id,
       spotlightName: spotlight.nickname,
@@ -93,6 +95,14 @@ const VibeMeterGame = (function() {
 
   function submitChoice(optIdx) {
     if (!currentRound || currentRound.status !== 'answering') return;
+    if (NetworkManager.isLocalMode()) {
+      const voter = players[localTurnIdx];
+      if (!voter) return;
+      localTurnIdx++;
+      recordAnswer(voter.id, optIdx);
+      if (typeof AntigravityAudio !== 'undefined') AntigravityAudio.playClick();
+      return;
+    }
     if (currentRound.answers[myId] !== undefined) return;
 
     if (isHost) {
@@ -188,16 +198,27 @@ const VibeMeterGame = (function() {
         </div>
       `;
     } else {
-      const isSpotlight = currentRound.spotlightId === myId;
-      const myChoice = currentRound.answers[myId];
+      const isLocal = NetworkManager.isLocalMode();
+      const localVoter = isLocal ? players[localTurnIdx] : null;
+      const isSpotlight = isLocal
+        ? (localVoter && localVoter.id === currentRound.spotlightId)
+        : (currentRound.spotlightId === myId);
+      const myChoice = isLocal ? undefined : currentRound.answers[myId];
       const answeredCount = Object.keys(currentRound.answers).length;
 
       html += `
         <div class="social-card">
-          <div class="target-banner" style="border-color: ${currentRound.spotlightColor};">
-            <span>نجم الجولة:</span>
-            <strong style="color: ${currentRound.spotlightColor};">${currentRound.spotlightName}</strong>
-          </div>
+          ${currentRound.status === 'answering' && isLocal && localVoter ? `
+            <div class="target-banner" style="border-color: ${localVoter.color};">
+              <span>مرّر الموبايل لـ:</span>
+              <strong style="color: ${localVoter.color};">${localVoter.nickname}</strong>
+            </div>
+          ` : `
+            <div class="target-banner" style="border-color: ${currentRound.spotlightColor};">
+              <span>نجم الجولة:</span>
+              <strong style="color: ${currentRound.spotlightColor};">${currentRound.spotlightName}</strong>
+            </div>
+          `}
           <p class="vibe-subtitle">
             ${isSpotlight
               ? 'جاوب بصراحة عن إحساسك الحقيقي (الشلة بتحاول تتوقع إجابتك!)'
