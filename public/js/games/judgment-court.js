@@ -9,6 +9,7 @@ const JudgmentCourtGame = (function() {
   let currentIntensity = 'spicy';
   let currentRound = null; // { targetId, targetName, targetColor, dareText, intensity, votes: { [id]: 'pass'|'fail' }, status: 'voting'|'resolved' }
   let targetRotationIdx = 0;
+  let usedDares = new Set();
 
   const DARES = {
     chill: [
@@ -74,7 +75,13 @@ const JudgmentCourtGame = (function() {
     if (customDares.length > 0 && Math.random() < 0.45) {
       pool = customDares;
     }
-    const dareText = pool[Math.floor(Math.random() * pool.length)];
+    let available = pool.filter(d => !usedDares.has(d));
+    if (available.length === 0) {
+      pool.forEach(d => usedDares.delete(d));
+      available = pool;
+    }
+    const dareText = available[Math.floor(Math.random() * available.length)];
+    usedDares.add(dareText);
 
     currentRound = {
       targetId: target.id,
@@ -204,9 +211,9 @@ const JudgmentCourtGame = (function() {
     if (!stage) return;
 
     const intensityLabels = {
-      chill: { icon: 'smile', label: 'خفيف ومضحك' },
-      spicy: { icon: 'flame', label: 'حامي ومحرِج' },
-      extreme: { icon: 'zap', label: 'نار وتحدي' }
+      chill: { icon: 'coffee', label: 'رايق / ودي' },
+      spicy: { icon: 'flame', label: 'جريء' },
+      extreme: { icon: 'zap', label: 'تحدي تقيل' }
     };
 
     let html = `
