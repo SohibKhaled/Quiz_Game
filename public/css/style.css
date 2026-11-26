@@ -698,6 +698,10 @@ button:disabled, .disabled { opacity: 0.4 !important; cursor: not-allowed !impor
 .timer-subtext { font-size: 0.84rem !important; text-align: center; color: var(--neon-cyan) !important; font-weight: 700; }
 .timer-subtext.time-up-txt { color: var(--neon-magenta) !important; }
 .loser-row { background: rgba(255,46,147,0.12) !important; }
+.faceoff-vs-banner { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.fo-player { padding: 8px 18px; border-radius: 10px; border: 1px solid; background: rgba(255,255,255,0.04); font-weight: 800; font-size: 1.08rem; }
+.fo-vs { font-family: var(--font-display); font-weight: 800; color: var(--neon-magenta); font-size: 1.1rem; }
+.bomb-pulse-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: rgba(255,46,147,0.18); border: 1px solid var(--neon-magenta); color: var(--neon-magenta); font-weight: 800; animation: neonPulse 0.7s infinite; }
 
 /* Toasts & Status */
 #toast-container { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; pointer-events: none; }

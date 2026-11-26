@@ -238,6 +238,7 @@ const TruthDareGame = (function() {
   function applyChoice(choice) {
     currentRound.choice = choice;
     currentRound.prompt = drawNonRepeating(choice);
+    currentRound.doubleStakes = false;
     currentRound.status = 'acting';
     currentRound.timeLeft = config.turnTimerSeconds || 0;
     currentRound.timeExpired = false;
@@ -248,11 +249,20 @@ const TruthDareGame = (function() {
     startTurnCountdown();
   }
 
+  function toggleDoubleStakes() {
+    if (!isHost || !currentRound || currentRound.status !== 'acting') return;
+    currentRound.doubleStakes = !currentRound.doubleStakes;
+    if (typeof AntigravityAudio !== 'undefined') AntigravityAudio.playClick();
+    NetworkManager.broadcastGameData({ type: 'TDARE_STATE', round: currentRound, scores, config, askedCount });
+    render();
+  }
+
   function resolvePass() {
     if (!isHost || !currentRound) return;
     clearTurnTimer();
     askedCount[currentRound.targetId] = (askedCount[currentRound.targetId] || 0) + 1;
-    scores[currentRound.targetId] = (scores[currentRound.targetId] || 0) + 15;
+    const pts = currentRound.doubleStakes ? 30 : 15;
+    scores[currentRound.targetId] = (scores[currentRound.targetId] || 0) + pts;
     currentRound.status = 'resolved';
     currentRound.passed = true;
 
@@ -318,20 +328,24 @@ const TruthDareGame = (function() {
     const levelMeta = {
       casual: { icon: 'coffee', label: 'رايق / ودي' },
       bold: { icon: 'flame', label: 'صريح / جريء' },
-      intense: { icon: 'zap', label: 'مشاعر وتحدي تقيل' }
+      intense: { icon: 'heart-crack', label: 'مشاعر وتحدي تقيل' },
+      redline: { icon: 'shield-alert', label: 'خط أحمر / بدون فلتر' }
     };
 
     let html = `<div class="social-game-wrapper rtl-text">`;
 
     if (!currentRound || currentRound.status === 'setup') {
       if (isHost) {
+        const totalPool =
+          bank.TRUTHS.casual.length + bank.TRUTHS.bold.length + bank.TRUTHS.intense.length + (bank.TRUTHS.redline?.length || 0) +
+          bank.DARES.casual.length + bank.DARES.bold.length + bank.DARES.intense.length + (bank.DARES.redline?.length || 0);
         html += `
           <div class="social-card setup-card">
             <div class="setup-header">
               <div class="social-icon-badge sm"><i data-lucide="settings-2"></i></div>
               <div>
                 <h3>إعدادات جولة صراحة وجرأة</h3>
-                <p>أكتر من ${bank.TRUTHS.casual.length + bank.TRUTHS.bold.length + bank.TRUTHS.intense.length + bank.DARES.casual.length + bank.DARES.bold.length + bank.DARES.intense.length} سؤال وتحدي بدون تكرار</p>
+                <p>أكتر من ${totalPool} سؤال وتحدي بدون تكرار</p>
               </div>
             </div>
 
@@ -480,16 +494,17 @@ const TruthDareGame = (function() {
               </p>
             </div>
           ` : ''}
-          <div class="dare-box" style="width:100%;">
+          <div class="dare-box ${currentRound.doubleStakes ? 'penalty-box' : ''}" style="width:100%;">
             <span class="dare-badge">
               <i data-lucide="${currentRound.choice === 'truth' ? 'message-circle-question' : 'flame'}"></i>
-              ${currentRound.choice === 'truth' ? 'سؤال صراحة' : 'تحدي جرأة'}
+              ${currentRound.choice === 'truth' ? 'سؤال صراحة' : 'تحدي جرأة'} ${currentRound.doubleStakes ? '(مضاعفة الرهان +30!)' : ''}
             </span>
             <p class="dare-text">${currentRound.prompt}</p>
           </div>
           ${isHost ? `
             <div class="vote-actions">
-              <button id="tdare-pass-btn" class="glow-btn-green"><i data-lucide="check-circle"></i> جاوب / نفّذ (+15)</button>
+              <button id="tdare-pass-btn" class="glow-btn-green"><i data-lucide="check-circle"></i> جاوب / نفّذ (+${currentRound.doubleStakes ? 30 : 15})</button>
+              <button id="tdare-double-btn" class="glass-btn ${currentRound.doubleStakes ? 'active' : ''}"><i data-lucide="zap"></i> ضاعف الرهان</button>
               <button id="tdare-refuse-btn" class="glow-btn-magenta"><i data-lucide="gavel"></i> رفض (اسحب حكم!)</button>
             </div>
           ` : `<p class="waiting-pulse">المضيف بيقيّم التنفيذ...</p>`}
@@ -564,6 +579,7 @@ const TruthDareGame = (function() {
     document.getElementById('tdare-truth-btn')?.addEventListener('click', () => pickChoice('truth'));
     document.getElementById('tdare-dare-btn')?.addEventListener('click', () => pickChoice('dare'));
     document.getElementById('tdare-pass-btn')?.addEventListener('click', resolvePass);
+    document.getElementById('tdare-double-btn')?.addEventListener('click', toggleDoubleStakes);
     document.getElementById('tdare-refuse-btn')?.addEventListener('click', triggerPenalty);
     document.getElementById('tdare-pen-done')?.addEventListener('click', () => finishPenalty(true));
     document.getElementById('tdare-pen-skip')?.addEventListener('click', () => finishPenalty(false));

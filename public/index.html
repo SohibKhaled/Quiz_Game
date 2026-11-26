@@ -78,13 +78,13 @@
         </div>
 
         <div class="glass-card info-card">
-          <h3>Two Worlds of Play (16 Games)</h3>
+          <h3>Two Worlds of Play (20 Games)</h3>
           <div class="mode-preview-list">
             <div class="mode-preview-item social">
               <div class="mode-icon-box magenta"><i data-lucide="flame"></i></div>
               <div>
-                <strong>قعدة الأصحاب والأسئلة (10 Social Games)</strong>
-                <p>صراحة وجرأة، كرسي الاعتراف، تحدي 5 ثواني، لو خيروك، محكمة الأحكام، مقياس المشاعر، مين فينا، الجاسوس، حقيقة أم كذبة، والكلمة الممنوعة.</p>
+                <strong>قعدة الأصحاب والأسئلة (14 Social Games)</strong>
+                <p>صراحة وجرأة، مواجهة 1v1، القنبلة الموقوتة، رهان الشجاعة، ترتيب الشلة، كرسي الاعتراف، تحدي 5 ثواني، لو خيروك، محكمة الأحكام، مقياس المشاعر، مين فينا، الجاسوس، حقيقة أم كذبة، والكلمة الممنوعة.</p>
               </div>
             </div>
             <div class="mode-preview-item arcade">
@@ -177,7 +177,7 @@
             <div class="category-tabs">
               <button class="cat-tab active" data-category="social">
                 <i data-lucide="flame"></i>
-                <span>قعدة الأصحاب (10)</span>
+                <span>قعدة الأصحاب (14)</span>
               </button>
               <button class="cat-tab" data-category="arcade">
                 <i data-lucide="gamepad-2"></i>
@@ -314,6 +314,58 @@
                 <div class="game-meta">
                   <span><i data-lucide="users"></i> 2-12</span>
                   <span><i data-lucide="timer"></i> 45s Rush</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="face-off" data-category="social">
+              <div class="game-card-icon magenta"><i data-lucide="swords"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">مواجهة 1 ضد 1 • جهاز واحد أو أونلاين</div>
+                <h3>مواجهة وجهاً لوجه</h3>
+                <p>اتنين من الشلة في مواجهة صريحة أو تحدي نظرات مباشر، والشلة بتحكم مين كسب!</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="swords"></i> 1v1 Duel</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="sacrifice-bid" data-category="social">
+              <div class="game-card-icon cyan"><i data-lucide="hand"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">رهان ونقط تقيلة</div>
+                <h3>رهان الشجاعة</h3>
+                <p>تحديات تقيلة ونقط ضخمة (+35)! اللي يتطوع ينفّذ يكسب، ولو محدش اتطوع القرعة تختار ضحية.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="award"></i> High Stakes</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="hot-potato" data-category="social">
+              <div class="game-card-icon pink"><i data-lucide="bomb"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">سرعة وأدرينالين • جهاز واحد أو أونلاين</div>
+                <h3>القنبلة الموقوتة</h3>
+                <p>جاوب بسرعة ومرّر القنبلة للي بعدك! اللي تنفجر في إيده ياخد حكم تقيل فوري.</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="flame"></i> Bomb Fuse</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" data-game="rank-crew" data-category="social">
+              <div class="game-card-icon purple"><i data-lucide="list-ordered"></i></div>
+              <div class="game-card-content rtl-text">
+                <div class="game-badge">صراحة مطلقة • جهاز واحد أو أونلاين</div>
+                <h3>ترتيب الشلة بصراحة</h3>
+                <p>رتّب 3 من صحابك من غير مجاملة على صفة أو موقف، والشلة تحكم أنت صادق ولا لأ!</p>
+                <div class="game-meta">
+                  <span><i data-lucide="users"></i> 2-12</span>
+                  <span><i data-lucide="shield-alert"></i> No Filter</span>
                 </div>
               </div>
             </div>
@@ -520,6 +572,22 @@
               <div id="taboo-dash-stage" class="social-stage-fill"></div>
             </div>
 
+            <div id="game-face-off" class="game-subview">
+              <div id="face-off-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-sacrifice-bid" class="game-subview">
+              <div id="sacrifice-bid-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-hot-potato" class="game-subview">
+              <div id="hot-potato-stage" class="social-stage-fill"></div>
+            </div>
+
+            <div id="game-rank-crew" class="game-subview">
+              <div id="rank-crew-stage" class="social-stage-fill"></div>
+            </div>
+
             <div id="game-overlay" class="game-overlay hidden">
               <div class="overlay-content glass-card">
                 <h2 id="overlay-title">Ready?</h2>
@@ -579,6 +647,10 @@
   <script src="/js/games/spy-game.js"></script>
   <script src="/js/games/truth-bluff.js"></script>
   <script src="/js/games/taboo-dash.js"></script>
+  <script src="/js/games/face-off.js"></script>
+  <script src="/js/games/sacrifice-bid.js"></script>
+  <script src="/js/games/hot-potato.js"></script>
+  <script src="/js/games/rank-crew.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

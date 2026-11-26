@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sohib-games-v6';
+const CACHE_NAME = 'sohib-games-v7';
 const ASSETS = [
   '/',
   '/index.html',
@@ -22,7 +22,11 @@ const ASSETS = [
   '/js/games/truth-dare.js',
   '/js/games/deep-talk.js',
   '/js/games/five-seconds.js',
-  '/js/games/would-you-rather.js'
+  '/js/games/would-you-rather.js',
+  '/js/games/face-off.js',
+  '/js/games/sacrifice-bid.js',
+  '/js/games/hot-potato.js',
+  '/js/games/rank-crew.js'
 ];
 
 self.addEventListener('install', (event) => {
