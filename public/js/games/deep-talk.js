@@ -50,10 +50,11 @@ const DeepTalkGame = (function() {
     if (!samePlayer) rotationIdx++;
     const target = players[(rotationIdx - 1 + players.length) % players.length];
 
-    let available = QUESTIONS.filter(item => !usedQuestions.has(item.q));
+    const pool = (window.SOHIB_BANK && window.SOHIB_BANK.DEEP_TALK) ? window.SOHIB_BANK.DEEP_TALK : QUESTIONS;
+    let available = pool.filter(item => !usedQuestions.has(item.q));
     if (available.length === 0) {
       usedQuestions.clear();
-      available = QUESTIONS;
+      available = pool;
     }
     const pick = available[Math.floor(Math.random() * available.length)];
     usedQuestions.add(pick.q);

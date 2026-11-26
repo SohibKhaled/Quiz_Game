@@ -1,10 +1,11 @@
-const CACHE_NAME = 'sohib-games-v5';
+const CACHE_NAME = 'sohib-games-v6';
 const ASSETS = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/audio.js',
   '/js/network.js',
+  '/js/data/questions-bank.js',
   '/js/app.js',
   '/js/games/astro-trail.js',
   '/js/games/draw-guess.js',

@@ -693,6 +693,11 @@ button:disabled, .disabled { opacity: 0.4 !important; cursor: not-allowed !impor
 .round-meta-strip .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; }
 .round-meta-strip .badge svg.lucide { width: 13px; height: 13px; }
 .penalty-box { border-color: rgba(255,46,147,0.5) !important; background: rgba(255,46,147,0.08) !important; }
+.td-timer-wrap { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+.vibe-meter-fill.danger { background: linear-gradient(90deg, #ef4444, #ff2e93); }
+.timer-subtext { font-size: 0.84rem !important; text-align: center; color: var(--neon-cyan) !important; font-weight: 700; }
+.timer-subtext.time-up-txt { color: var(--neon-magenta) !important; }
+.loser-row { background: rgba(255,46,147,0.12) !important; }
 
 /* Toasts & Status */
 #toast-container { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; pointer-events: none; }
@@ -716,15 +721,18 @@ button:disabled, .disabled { opacity: 0.4 !important; cursor: not-allowed !impor
 .hidden { display: none !important; }
 
 @media (max-width: 900px) {
-  body { padding: 10px; padding-top: 56px; align-items: flex-start; }
-  #sound-toggle { top: 10px; right: 10px; padding: 8px; }
+  body { padding: 8px; padding-top: 52px; align-items: flex-start; }
+  #sound-toggle { top: 8px; right: 8px; padding: 8px; }
   .app-container { width: 100%; height: auto; min-height: 90vh; max-height: none; }
   .card-grid, .lobby-layout, .game-arena-layout, .game-cards-container, .social-options-grid, .wyr-split { grid-template-columns: 1fr; }
+  .main-setup-card, .info-card, .lobby-main, .lobby-sidebar, .social-card { padding: 16px; }
+  .glow-btn-cyan, .glow-btn-magenta, .glow-btn-green, .glow-btn-purple, .glass-btn { min-height: 44px; }
   .game-arena-layout { height: auto; }
-  .game-stage-container { height: auto; min-height: 460px; overflow: visible; }
-  .game-canvas-wrapper { min-height: 380px; }
-  .game-subview { position: relative; min-height: 380px; }
-  .social-stage-fill { padding: 12px; }
-  .game-sidebar { height: auto; max-height: 420px; }
-  .logo-glow { font-size: 2.7rem; }
+  .game-stage-container { height: auto; min-height: 440px; overflow: visible; padding: 12px; }
+  .game-canvas-wrapper { min-height: 360px; }
+  .game-subview { position: relative; min-height: 360px; }
+  .social-stage-fill { padding: 8px; align-items: flex-start; }
+  .game-sidebar { height: auto; max-height: 400px; }
+  .logo-glow { font-size: 2.5rem; letter-spacing: 3px; }
+  .subtitle-neon { letter-spacing: 2px; font-size: 0.82rem; }
 }

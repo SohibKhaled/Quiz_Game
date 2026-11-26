@@ -47,10 +47,11 @@ const WhosLikelyGame = (function() {
 
   function nextPrompt() {
     if (!isHost) return;
-    let available = PROMPTS.filter(p => !usedPrompts.has(p));
+    const pool = (window.SOHIB_BANK && window.SOHIB_BANK.WHOS_LIKELY) ? window.SOHIB_BANK.WHOS_LIKELY : PROMPTS;
+    let available = pool.filter(p => !usedPrompts.has(p));
     if (available.length === 0) {
       usedPrompts.clear();
-      available = PROMPTS;
+      available = pool;
     }
     const prompt = available[Math.floor(Math.random() * available.length)];
     usedPrompts.add(prompt);

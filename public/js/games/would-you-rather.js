@@ -45,10 +45,11 @@ const WouldYouRatherGame = (function() {
 
   function nextDilemma() {
     if (!isHost) return;
-    let avail = DILEMMAS.filter(d => !used.has(d.a));
+    const pool = (window.SOHIB_BANK && window.SOHIB_BANK.WOULD_YOU_RATHER) ? window.SOHIB_BANK.WOULD_YOU_RATHER : DILEMMAS;
+    let avail = pool.filter(d => !used.has(d.a));
     if (avail.length === 0) {
       used.clear();
-      avail = DILEMMAS;
+      avail = pool;
     }
     const pick = avail[Math.floor(Math.random() * avail.length)];
     used.add(pick.a);
