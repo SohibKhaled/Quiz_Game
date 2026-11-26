@@ -727,6 +727,7 @@ button:disabled, .disabled { opacity: 0.4 !important; cursor: not-allowed !impor
 @media (max-width: 900px) {
   body { padding: 8px; padding-top: 52px; align-items: flex-start; }
   #sound-toggle { top: 8px; right: 8px; padding: 8px; }
+  #connection-status-indicator { top: 8px; left: 8px; bottom: auto; right: auto; }
   .app-container { width: 100%; height: auto; min-height: 90vh; max-height: none; }
   .card-grid, .lobby-layout, .game-arena-layout, .game-cards-container, .social-options-grid, .wyr-split { grid-template-columns: 1fr; }
   .main-setup-card, .info-card, .lobby-main, .lobby-sidebar, .social-card { padding: 16px; }
